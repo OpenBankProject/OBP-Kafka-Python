@@ -60,24 +60,54 @@ def getBanks(args):
   # return result
   return r
 
-# getTransactions returns transactions
-# accepts arguments
+# getTransaction returns transaction data
+# accepts arguments: bankId, accountId, and transactionId 
 # returns string
 #
-def getTransactions(args):
+def getTransaction(args):
   # hardcoded values for transaction1 
-  bankId          = "123"
-  accountId       = "12345"
-  transactionId   = "1"
-  transactionType = "current"
-  amount          = "10,000.00"
-  currency        = "EUR"
-  description     = "Test transaction"
-  startDate       = "Fri Nov 13 17:57:02 CET 2015"
-  finishDate      = "Fri Nov 13 17:57:04 CET 2015"
-  balance         = "10,000.00"
-  otherBankId     = "321"
-  otherAccountId  = "54321"
+  if bankId == "123" and accountId == "12345" and transactionId == "1":
+    bankId          = "123"
+    accountId       = "12345"
+    transactionId   = "1"
+    transactionType = "current"
+    amount          = "10000"
+    currency        = "EUR"
+    description     = "Test transaction"
+    startDate       = "Fri Nov 13 17:57:02 CET 2015"
+    finishDate      = "Fri Nov 13 17:57:04 CET 2015"
+    balance         = "10000"
+    otherBankId     = "321"
+    otherAccountId  = "54321"
+  elif bankId == "123" and accountId == "12345" and transactionId == "2":
+    bankId          = "123"
+    accountId       = "12345"
+    transactionId   = "2"
+    transactionType = "current"
+    amount          = "2000"
+    currency        = "EUR"
+    description     = "Test transaction"
+    startDate       = "Fri Nov 13 17:57:02 CET 2015"
+    finishDate      = "Fri Nov 13 17:57:04 CET 2015"
+    balance         = "12000"
+    otherBankId     = "321"
+    otherAccountId  = "54321"
+  elif bankId == "321" and accountId == "54321" and transactionId == "3":
+    bankId          = "321"
+    accountId       = "54321"
+    transactionId   = "3"
+    transactionType = "current"
+    amount          = "8000"
+    currency        = "EUR"
+    description     = "Test 2nd transaction"
+    startDate       = "Fri Nov 14 17:57:02 CET 2015"
+    finishDate      = "Fri Nov 14 17:57:04 CET 2015"
+    balance         = "13000"
+    otherBankId     = "123"
+    otherAccountId  = "12345"
+  else:
+    # just two transactions in this demo
+    return '{}'
   # assemble the return string
   r  = '{'
   r += 'bankId:"'          + bankId          + '",' 
@@ -96,13 +126,42 @@ def getTransactions(args):
   # return result
   return r
 
+# getTransactions returns list of transactions depending on queryParams
+# accepts arguments: bankId, accountId, and queryParams
+# returns string
+#
+def getTransactions(args):
+  # get arguments
+  bankId  = args['bankId'] 
+  accountId = args['accountId']
+  # mock search results according to queryParams
+  if (bankId == "123" and accountID == "12345"):
+    transactionIds = ['1','2']
+  elif (bankId == "321" and accountID == "54321"):
+    transactionIds = ['3']
+  else:
+    return '{}'
+  # opening bracket
+  r  =  '{' 
+  # loop over all bankIds
+  for transactionId in transactionIds:
+    # get bank data calling getBank with bankId as argument
+    r += getTransaction({"bankId":bankId,"accountId":accountId,"transactionId":transactionId})
+    # add comma after each entry
+    r += ','
+  # remove trailing comma from result string
+  r  = r[:-1]  
+  # closing bracket
+  r  +=  '}' 
+  # return result
+  return r
 
 # getBankAccount returns bank account data 
 # accepts arguments: bankId and accountId
 # returns string
 #
 def getBankAccount(args):
-  # get argument
+  # get arguments
   bankId = args['bankId']
   accountId = args['accountId']
   if not bankId or not accountId:
@@ -112,7 +171,7 @@ def getBankAccount(args):
     # hardcoded values for bankAccount1 
     accountId       = "12345"
     accountType     = "savings"
-    balance         = "20,000.00"
+    balance         = "20000"
     currency        = "EUR"
     name            = "Test transaction"
     label           = "test_transaction"
@@ -126,7 +185,7 @@ def getBankAccount(args):
     # hardcoded values for bankAccount2
     accountId       = "54321"
     accountType     = "savings"
-    balance         = "15,000.00"
+    balance         = "15000"
     currency        = "EUR"
     name            = "Transaction testing"
     label           = "transaction_testing"
