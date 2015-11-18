@@ -17,8 +17,9 @@ Listens to Kafka queue and responds to requests from OBP-API
 
 Note: replace hostname_or_ip with address
 
-```$ export KAFKA_HOST=hostname_or_ip:9092```
-```$ python server.py```
+export KAFKA_HOST=hostname_or_ip:9092
+
+python server.py
 
 
 
@@ -26,6 +27,6 @@ Note: replace hostname_or_ip with address
 
 Edit Dockerfile and set KAFKA_HOST, then run 
 
-```./build_and_install_container.sh```
+bash build_and_install_container.sh
 
 
