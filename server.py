@@ -16,23 +16,6 @@ except ImportError:
   site.addsitedir('lib/')
   from kafka import KeyedProducer, KafkaConsumer, KafkaClient
 
-try:
-  from kazoo.client import KazooClient
-except ImportError:
-  pass
-  # Use included module
-  site.addsitedir('lib/')
-  from kazoo.client import KazooClient
-
-try:
-  from samsa.cluster import Cluster
-except ImportError:
-  pass
-  # Use included module
-  site.addsitedir('lib/')
-  from samsa.cluster import Cluster
-
-
 # Define globals
 TPC_RESPONSE = "Response"
 TPC_REQUEST  = "Request"
@@ -56,10 +39,10 @@ def get_default_gateway_linux():
 
 # determine zookeeper host from environment or use gateway address
 try:
-  os.environ["ZOOKEEPER_HOST"]
+  os.environ["KAFKA_HOST"]
 except KeyError:
   pass
-  os.environ["ZOOKEEPER_HOST"] = get_default_gateway_linux() + ":2181"
+  os.environ["KAFKA_HOST"] = get_default_gateway_linux() + ":9092"
 
 # Split message and extract function name and arguments
 # then pass them to obp.py for further processing 
@@ -95,20 +78,19 @@ def processMessage(message):
 #
 while (True):
   try:
-    # get the zookeeper host
-    zookeeper_host = os.environ["ZOOKEEPER_HOST"]
-    # connect to zookeeper
-    zookeeper = KazooClient(hosts=zookeeper_host)
-    zookeeper.start()
-    # connect to kafka cluster
-    cluster = Cluster(zookeeper)
-    print("fff")
-    # set request and response topics
-    reqTopic = cluster.topics.get(TPC_REQUEST)
-    resTopic = cluster.topics.get(TPC_RESPONSE)
-    # init kafka consumer 
-    consumer = reqTopic.subscribe(KAFKA_GRP_ID)
+    # get the kafka host
+    kafka_host = os.environ["KAFKA_HOST"]
+    if (DEBUG): 
+      print("Connecting to " + kafka_host + "...")
+    # init kafka producer
+    producer = KeyedProducer( KafkaClient(kafka_host) )
+    # init kafka condumer 
+    consumer = KafkaConsumer( TPC_REQUEST,
+                              group_id=KAFKA_GRP_ID,
+                              bootstrap_servers=[kafka_host] )
     # wait for new message in queue 
+    if (DEBUG): 
+      print("Connected. Waiting for messages...")
     for message in consumer:
       if (DEBUG):
         # debug output
@@ -122,9 +104,12 @@ while (True):
       if (DEBUG):
         # debug output
         print(result)
+        print("")
       if result != None:
         # send result message back to kafka
-        resTopic.publish(result.encode("UTF8"), message.key)
+        producer.send_messages( TPC_RESPONSE.encode("UTF8"), 
+                                message.key,
+                                result.encode("UTF8"))
   except Exception as e: 
     pass 
     z = e 
