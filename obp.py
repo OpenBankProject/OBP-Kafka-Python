@@ -66,9 +66,9 @@ def getBanks(args):
 #
 def getTransaction(args):
   # hardcoded values for transaction1 
-  if bankId == "123" and accountId == "12345" and transactionId == "1":
-    bankId          = "123"
-    accountId       = "12345"
+  if bankId == "obp-bank-x-gh" and accountId == "test-x" and transactionId == "1":
+    bankId          = "obp-bank-x-gh"
+    accountId       = "test-x"
     transactionId   = "1"
     transactionType = "current"
     amount          = "10000"
@@ -77,11 +77,11 @@ def getTransaction(args):
     startDate       = "Fri Nov 13 17:57:02 CET 2015"
     finishDate      = "Fri Nov 13 17:57:04 CET 2015"
     balance         = "10000"
-    otherBankId     = "321"
-    otherAccountId  = "54321"
-  elif bankId == "123" and accountId == "12345" and transactionId == "2":
-    bankId          = "123"
-    accountId       = "12345"
+    otherBankId     = "obp-bank-y-gh"
+    otherAccountId  = "test-y"
+  elif bankId == "obp-bank-x-gh" and accountId == "test-x" and transactionId == "2":
+    bankId          = "obp-bank-x-gh"
+    accountId       = "test-x"
     transactionId   = "2"
     transactionType = "current"
     amount          = "2000"
@@ -90,11 +90,11 @@ def getTransaction(args):
     startDate       = "Fri Nov 13 17:57:02 CET 2015"
     finishDate      = "Fri Nov 13 17:57:04 CET 2015"
     balance         = "12000"
-    otherBankId     = "321"
-    otherAccountId  = "54321"
-  elif bankId == "321" and accountId == "54321" and transactionId == "3":
-    bankId          = "321"
-    accountId       = "54321"
+    otherBankId     = "obp-bank-y-gh"
+    otherAccountId  = "test-y"
+  elif bankId == "obp-bank-y-gh" and accountId == "test-y" and transactionId == "3":
+    bankId          = "obp-bank-y-gh"
+    accountId       = "test-y"
     transactionId   = "3"
     transactionType = "current"
     amount          = "8000"
@@ -103,8 +103,8 @@ def getTransaction(args):
     startDate       = "Fri Nov 14 17:57:02 CET 2015"
     finishDate      = "Fri Nov 14 17:57:04 CET 2015"
     balance         = "13000"
-    otherBankId     = "123"
-    otherAccountId  = "12345"
+    otherBankId     = "obp-bank-x-gh"
+    otherAccountId  = "test-x"
   else:
     # just two transactions in this demo
     return '{}'
@@ -135,9 +135,9 @@ def getTransactions(args):
   bankId  = args['bankId'] 
   accountId = args['accountId']
   # mock search results according to queryParams
-  if (bankId == "123" and accountID == "12345"):
+  if (bankId == "obp-bank-x-gh" and accountID == "test-x"):
     transactionIds = ['1','2']
-  elif (bankId == "321" and accountID == "54321"):
+  elif (bankId == "obp-bank-y-gh" and accountID == "test-y"):
     transactionIds = ['3']
   else:
     return '{}'

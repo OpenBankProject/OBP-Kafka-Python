@@ -1,6 +1,8 @@
 #!/bin/bash
 
-CONTAINER_NAME="OBP-SOFI-EXPLORER-KAFKA"
+CONTAINER_NAME="obp-sofi-explorer-kafka"
+IMAGE_NAME="openbankproject/"${CONTAINER_NAME}
+
 
 # Lowercase CONTAINER_NAME
 REPOSITORY_NAME=$(echo ${CONTAINER_NAME} | tr '[:upper:]' '[:lower:]')
@@ -31,8 +33,7 @@ echo -n '.'
 # Build Docker image
 #
 echo 'please wait...'
-sed -i 's/ENV DOCKER_HOST_NAME=.*$/ENV DOCKER_HOST_NAME="'${DOCKER_HOST_NAME}'"/' Dockerfile
-OUTPUT=$(docker build -t ${REPOSITORY_NAME} .)
+OUTPUT=$(docker build -t ${IMAGE_NAME} .)
 IMAGE_ID=$(echo $OUTPUT | awk '{print $NF}')
 echo "IMAGE_ID     "${IMAGE_ID}
 
@@ -41,10 +42,6 @@ echo "IMAGE_ID     "${IMAGE_ID}
 CONTAINER_ID=$(docker run --restart=always --detach=true --name=${CONTAINER_NAME} ${IMAGE_ID} | cut -b1-12)
 echo "CONTAINER_ID "${CONTAINER_ID}
 
-# Rename container for easier removal
-#
-#docker rename ${CONTAINER_ID} ${CONTAINER_NAME}
-
 echo
-echo 'Done ;-)'
+echo 'Done'
 echo
