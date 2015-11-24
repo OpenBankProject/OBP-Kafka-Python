@@ -55,7 +55,7 @@ def processMessage(message):
   if rFnc != None:
     reqFunc = rFnc.group(1)
   # regex match function arguments
-  rArg = re.findall("[{,](.*?):\"(.*?)\"", message)
+  rArg = re.findall("[{,]\"(.*?)\":\"(.*?)\"", message)
   # create dictionary if not empty
   if rArg != None:
     reqArgs = dict((k, v) for (k, v) in rArg)
