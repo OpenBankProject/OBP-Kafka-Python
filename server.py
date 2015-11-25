@@ -74,7 +74,8 @@ def processMessage(message):
   else:
     return '{"error":"unknown request"}'
 
-#logging.basicConfig(format='%(asctime)s.%(msecs)s:%(name)s:%(thread)d:%(levelname)s:%(process)d:%(message)s', level=logging.DEBUG)
+# init logger
+logging.basicConfig(format='%(asctime)s.%(msecs)s:%(name)s:%(thread)d:%(levelname)s:%(process)d:%(message)s', level=logging.ERROR)
 
 # Main loop waits indefinitely for requests 
 # then passes them to processMessage()
