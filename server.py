@@ -7,6 +7,7 @@ import obp
 import os
 import socket
 import struct
+import logging 
 
 try:
   from kafka import KeyedProducer, KafkaConsumer, KafkaClient
@@ -16,10 +17,11 @@ except ImportError:
   site.addsitedir('lib/')
   from kafka import KeyedProducer, KafkaConsumer, KafkaClient
 
+
 # Define globals
 TPC_RESPONSE = "Response"
 TPC_REQUEST  = "Request"
-KAFKA_GRP_ID = "0"
+KAFKA_GRP_ID = "1"
 #DEBUG        = False
 DEBUG        = True
 
@@ -72,6 +74,7 @@ def processMessage(message):
   else:
     return '{"error":"unknown request"}'
 
+#logging.basicConfig(format='%(asctime)s.%(msecs)s:%(name)s:%(thread)d:%(levelname)s:%(process)d:%(message)s', level=logging.DEBUG)
 
 # Main loop waits indefinitely for requests 
 # then passes them to processMessage()
@@ -84,10 +87,16 @@ while (True):
       print("Connecting to " + kafka_host + "...")
     # init kafka producer
     producer = KeyedProducer( KafkaClient(kafka_host) )
+    if (DEBUG): 
+      if (producer):
+        print("producer: OK")
     # init kafka condumer 
     consumer = KafkaConsumer( TPC_REQUEST,
                               group_id=KAFKA_GRP_ID,
                               bootstrap_servers=[kafka_host] )
+    if (DEBUG): 
+      if (consumer):
+        print("consumer: OK")
     # wait for new message in queue 
     if (DEBUG): 
       print("Connected. Waiting for messages...")
@@ -113,7 +122,8 @@ while (True):
   except Exception as e: 
     pass 
     z = e 
-    print z
+    print ("Exception:")
+    print (z)
   # print disconnect message, sleep for a while, and try to reconnect
   print("Error: Kafka disconnected. Reconnecting...")
   time.sleep(10)

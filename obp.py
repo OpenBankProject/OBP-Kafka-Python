@@ -1,10 +1,22 @@
-# use the provided functions for connecting to your data sources 
+import json
+# load mockup data from json file
+with open('example_import.json') as data_file:
+  data = json.load(data_file)
+banks        = data["banks"]
+users        = data["users"]
+accounts     = data["accounts"]
+transactions = data["transactions"]
+
+#
+# use functions provided below as model for connecting to real data sources 
+#
 
 # getBank returns single bank data
 # accepts string bankId as argument 
 # returns string
 #
 def getBank(args):
+  global banks 
   # get argument
   bankId = args['bankId']
   if not bankId:
@@ -29,11 +41,11 @@ def getBank(args):
     return '{}'
   # assemble the return string
   r  = '{'
-  r += 'permalink:"'     + permalink     + '",' 
-  r += 'fullBankName:"'  + fullBankName  + '",' 
-  r += 'shortBankName:"' + shortBankName + '",' 
-  r += 'logoURL:"'       + logoURL       + '",' 
-  r += 'websiteURL:"'    + websiteURL    + '"'
+  r += '"permalink":"'     + permalink     + '",' 
+  r += '"fullBankName":"'  + fullBankName  + '",' 
+  r += '"shortBankName":"' + shortBankName + '",' 
+  r += '"logoURL":"'       + logoURL       + '",' 
+  r += '"websiteURL":"'    + websiteURL    + '"'
   r += '}' 
   # return result
   return r
@@ -43,6 +55,7 @@ def getBank(args):
 # returns string
 #
 def getBanks(args):
+  global banks 
   # list of bankIds to return
   bankList  = ["123", "321"] 
   # opening bracket
@@ -52,7 +65,7 @@ def getBanks(args):
     # get bank data calling getBank with bankId as argument
     r += getBank({"bankId":bank})
     # add comma after each entry
-    r += ','
+    r += '",'
   # remove trailing comma from result string
   r  = r[:-1]  
   # closing bracket
@@ -65,72 +78,38 @@ def getBanks(args):
 # returns string
 #
 def getTransaction(args):
-  # hardcoded values for transaction1 
-  if bankId == "obp-bank-x-gh" and accountId == "test-x" and transactionId == "1":
-    bankId          = "obp-bank-x-gh"
-    accountId       = "test-x"
-    transactionId   = "1"
-    transactionType = "current"
-    amount          = "10000"
-    currency        = "EUR"
-    description     = "Test transaction"
-    startDate       = "Fri Nov 13 17:57:02 CET 2015"
-    finishDate      = "Fri Nov 13 17:57:04 CET 2015"
-    balance         = "10000"
-    otherBankId     = "obp-bank-y-gh"
-    otherAccountId  = "test-y"
-  elif bankId == "obp-bank-x-gh" and accountId == "test-x" and transactionId == "2":
-    bankId          = "obp-bank-x-gh"
-    accountId       = "test-x"
-    transactionId   = "2"
-    transactionType = "current"
-    amount          = "2000"
-    currency        = "EUR"
-    description     = "Test transaction"
-    startDate       = "Fri Nov 13 17:57:02 CET 2015"
-    finishDate      = "Fri Nov 13 17:57:04 CET 2015"
-    balance         = "12000"
-    otherBankId     = "obp-bank-y-gh"
-    otherAccountId  = "test-y"
-  elif bankId == "obp-bank-y-gh" and accountId == "test-y" and transactionId == "3":
-    bankId          = "obp-bank-y-gh"
-    accountId       = "test-y"
-    transactionId   = "3"
-    transactionType = "current"
-    amount          = "8000"
-    currency        = "EUR"
-    description     = "Test 2nd transaction"
-    startDate       = "Fri Nov 14 17:57:02 CET 2015"
-    finishDate      = "Fri Nov 14 17:57:04 CET 2015"
-    balance         = "13000"
-    otherBankId     = "obp-bank-x-gh"
-    otherAccountId  = "test-x"
-  else:
-    # just two transactions in this demo
-    return '{}'
-  # assemble the return string
-  r  = '{'
-  r += 'bankId:"'          + bankId          + '",' 
-  r += 'accountId:"'       + accountId       + '",' 
-  r += 'transactionId:"'   + transactionId   + '",' 
-  r += 'transactionType:"' + transactionType + '",' 
-  r += 'amount:"'          + amount          + '",' 
-  r += 'currency:"'        + currency        + '",' 
-  r += 'description:"'     + description     + '",' 
-  r += 'startDate:"'       + startDate       + '",' 
-  r += 'finishDate:"'      + finishDate      + '",' 
-  r += 'balance:"'         + balance         + '",' 
-  r += 'otherBankId:"'     + otherBankId     + '",'
-  r += 'otherAccountId:"'  + otherAccountId  + '"'
-  r += '}' 
-  # return result
-  return r
+  global transactions 
+  # get arguments
+  bankId  = args['bankId'] 
+  accountId = args['accountId']
+  transactionId = args['transactionId']
+  for t in transactions:
+    if bankId == t["this_account"]["bank"] and accountId == t["this_account"]["id"] and transactionId == t["id"]:
+      # assemble the return string
+      r  = '{'
+      r += '"bankId":"'          + t["this_account"]["bank"]   + '",' 
+      r += '"accountId":"'       + t["this_account"]["id"]     + '",' 
+      r += '"transactionId":"'   + t["id"]                     + '",' 
+      r += '"transactionType":"' + t["details"]["type"]        + '",' 
+      r += '"amount":"'          + t["details"]["value"]       + '",' 
+      r += '"currency":"'        + "GBP"                       + '",' 
+      r += '"description":"'     + t["details"]["description"] + '",' 
+      r += '"startDate":"'       + t["details"]["posted"]      + '",' 
+      r += '"finishDate":"'      + t["details"]["completed"]   + '",' 
+      r += '"balance":"'         + t["details"]["new_balance"] + '",' 
+      r += '"otherBankId":"'     + "obp-bank-x-g"              + '",'
+      r += '"otherAccountId":"'  + "2330135d-fca8-4268-838d-833074985209"  + '"'
+      r += '}' 
+      # return result
+      return r
+  return '{}'
 
 # getTransactions returns list of transactions depending on queryParams
 # accepts arguments: bankId, accountId, and queryParams
 # returns string
 #
 def getTransactions(args):
+  global transactions 
   # get arguments
   bankId  = args['bankId'] 
   accountId = args['accountId']
@@ -148,7 +127,7 @@ def getTransactions(args):
     # get bank data calling getBank with bankId as argument
     r += getTransaction({"bankId":bankId,"accountId":accountId,"transactionId":transactionId})
     # add comma after each entry
-    r += ','
+    r += '",'
   # remove trailing comma from result string
   r  = r[:-1]  
   # closing bracket
@@ -161,6 +140,7 @@ def getTransactions(args):
 # returns string
 #
 def getBankAccount(args):
+  global data
   # get arguments
   bankId = args['bankId']
   accountId = args['accountId']
@@ -200,18 +180,18 @@ def getBankAccount(args):
     return '{}'
   # assemble the return string
   r  = '{'
-  r += 'accountId:"'       + accountId       + '",' 
-  r += 'accountType:"'     + accountType     + '",' 
-  r += 'balance:"'         + balance         + '",' 
-  r += 'currency:"'        + currency        + '",' 
-  r += 'name:"'            + name            + '",' 
-  r += 'label:"'           + label           + '",' 
-  r += 'swift_bic:"'       + swift_bic       + '",' 
-  r += 'iban:"'            + iban            + '",' 
-  r += 'number:"'          + number          + '",'
-  r += 'bankId:"'          + bankId          + '",' 
-  r += 'lastUpdate:"'      + lastUpdate      + '",'
-  r += 'accountHolder:"'   + accountHolder   + '"' #deprecated?
+  r += '"accountId":"'       + accountId       + '",' 
+  r += '"accountType":"'     + accountType     + '",' 
+  r += '"balance":"'         + balance         + '",' 
+  r += '"currency":"'        + currency        + '",' 
+  r += '"name":"'            + name            + '",' 
+  r += '"label":"'           + label           + '",' 
+  r += '"swift_bic":"'       + swift_bic       + '",' 
+  r += '"iban":"'            + iban            + '",' 
+  r += '"number":"'          + number          + '",'
+  r += '"bankId":"'          + bankId          + '",' 
+  r += '"lastUpdate":"'      + lastUpdate      + '",'
+  r += '"accountHolder":"'   + accountHolder   + '"' #deprecated?
   r += '}' 
   # return result
   return r
