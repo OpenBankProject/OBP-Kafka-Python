@@ -1,6 +1,6 @@
 FROM python:2-onbuild
-CMD [ "python", "./server.py" ]
+ENTRYPOINT [ "python", "-u", "./server.py" ]
 
 # Define Zookeeper host if different from Docker host machine
-#ENV KAFKA_HOST=10.38.16.87:9092
+#ENV KAFKA_HOST=123.45.67.89:9092
 
