@@ -123,8 +123,7 @@ while (True):
   except Exception as e: 
     pass 
     z = e 
-    print ("Exception:")
-    print (z)
+    print ("Exception: %s" % z)
   # print disconnect message, sleep for a while, and try to reconnect
   print("Error: Kafka disconnected. Reconnecting...")
   time.sleep(10)
