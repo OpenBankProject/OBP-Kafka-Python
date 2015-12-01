@@ -1,4 +1,10 @@
 import json
+import uuid
+import datetime
+import random
+
+import settings
+
 # load mockup data from json file
 with open('example_import.json') as data_file:
   data = json.load(data_file)
@@ -62,6 +68,42 @@ def getBanks(args):
   # return result
   return r
 
+
+# getRandomTransaction returns a random transaction
+# accepts arguments: accounts
+# returns dict of strings representing the account data
+def getRandomTransaction(accounts):
+    account = accounts[random.randint(0, len(accounts) - 1)]
+    transaction_id = str(uuid.uuid4())
+    description = "Random transfer {}".format(transaction_id)
+    nowish = datetime.datetime.now().strftime(
+        "%Y-%m-%dT%H:%M:%S.000Z")
+    new_balance = "{:.2f}".format(random.random() * 1000)
+    value = "{:.2f}".format(random.random() * -10)
+
+    transaction = {
+      "id": transaction_id,
+      "this_account":{
+        "id": account['id'],
+        "bank": account['bank'],
+      },
+      "counterparty":{
+        "name":"NONE"
+      },
+      "details":{
+        "type":"Transfer",
+        "description": description,
+        "posted": nowish,
+        "completed": nowish,
+        "new_balance": new_balance,
+        "value": value,
+      }
+    }
+    if settings.DEBUG:
+        print("Transaction: {}".format(transaction))
+    return transaction
+
+
 # getTransaction returns transaction data
 # accepts arguments: bankId, accountId, and transactionId 
 # returns string
@@ -72,6 +114,9 @@ def getTransaction(args):
   bankId  = args['bankId'] 
   accountId = args['accountId']
   transactionId = args['transactionId']
+  if settings.INJECT_RANDOM_TRANSACTIONS:
+    global accounts
+    transactions.append(getRandomTransaction(accounts))
   for t in transactions:
     if bankId == t["this_account"]["bank"] and accountId == t["this_account"]["id"] and transactionId == t["id"]:
       # assemble the return string
@@ -104,6 +149,9 @@ def getTransactions(args):
   bankId  = args['bankId'] 
   accountId = args['accountId']
   queryParams = args['queryParams']
+  if settings.INJECT_RANDOM_TRANSACTIONS:
+    global accounts
+    transactions.append(getRandomTransaction(accounts))
   r  =  '{' 
   for t in transactions:
     if bankId == t["this_account"]["bank"] and accountId == t["this_account"]["id"]:

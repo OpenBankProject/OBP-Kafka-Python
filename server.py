@@ -9,6 +9,8 @@ import socket
 import struct
 import logging 
 
+import settings
+
 try:
   from kafka import KeyedProducer, KafkaConsumer, KafkaClient
 except ImportError:
@@ -22,8 +24,6 @@ except ImportError:
 TPC_RESPONSE = "Response"
 TPC_REQUEST  = "Request"
 KAFKA_GRP_ID = "1"
-#DEBUG        = False
-DEBUG        = True
 
 # Get default gateway from /proc and use it as host address of Zookeeper
 def get_default_gateway_linux():
@@ -85,25 +85,25 @@ while (True):
   try:
     # get the kafka host
     kafka_host = os.environ["KAFKA_HOST"]
-    if (DEBUG): 
+    if (settings.DEBUG): 
       print("Connecting to " + kafka_host + "...")
     # init kafka producer
     producer = KeyedProducer( KafkaClient(kafka_host) )
-    if (DEBUG): 
+    if (settings.DEBUG): 
       if (producer):
         print("producer: OK")
     # init kafka condumer 
     consumer = KafkaConsumer( TPC_REQUEST,
                               group_id=KAFKA_GRP_ID,
                               bootstrap_servers=[kafka_host] )
-    if (DEBUG): 
+    if (settings.DEBUG): 
       if (consumer):
         print("consumer: OK")
     # wait for new message in queue 
-    if (DEBUG): 
+    if (settings.DEBUG): 
       print("Connected. Waiting for messages...")
     for message in consumer:
-      if (DEBUG):
+      if (settings.DEBUG):
         # debug output
         print("%s:%d:%d: key=%s value=%s" % ( message.topic, 
                                               message.partition,
@@ -112,7 +112,7 @@ while (True):
                                               message.value))
       # send received message to processing
       result = processMessage(message.value)
-      if (DEBUG):
+      if (settings.DEBUG):
         # debug output
         print(result)
         print("")
