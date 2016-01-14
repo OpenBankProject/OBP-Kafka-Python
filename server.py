@@ -39,13 +39,6 @@ def get_default_gateway_linux():
       # covert read field to ipv4 format
       return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
 
-# determine zookeeper host from environment or use gateway address
-try:
-  os.environ["KAFKA_HOST"]
-except KeyError:
-  pass
-  os.environ["KAFKA_HOST"] = get_default_gateway_linux() + ":9092"
-
 # Split message and extract function name and arguments
 # then pass them to obp.py for further processing 
 #
@@ -75,6 +68,36 @@ def processMessage(message):
   else:
     return '{"error":"unknown request"}'
 
+# determine if running on localhost or in docker container
+kafka_host = "localhost:9092"
+try:
+  os.environ["ADVERTISED_HOST"]
+except KeyError:
+  pass
+else:
+  kafka_host = os.environ["ADVERTISED_HOST"] + ":9092"
+
+# try connecting to Kafka until successful
+disconnected = True
+while (disconnected):
+  try:
+    status = KeyedProducer( KafkaClient(kafka_host) )
+    disconnected = False 
+  except Exception as e:
+    pass 
+    disconnected = True
+    print("Waiting for " + kafka_host + " to become available...")
+    time.sleep(3)
+
+# send initial status messages
+try:
+  status.send_messages( TPC_REQUEST.encode("UTF8"), "status","ruok".encode("UTF8"))
+  status.send_messages( TPC_RESPONSE.encode("UTF8"), "status","imok".encode("UTF8"))
+except Exception as e:
+  pass 
+
+print("Connected to " + kafka_host + ".")
+
 # init logger
 logging.basicConfig(format='%(asctime)s.%(msecs)s:%(name)s:%(thread)d:%(levelname)s:%(process)d:%(message)s', level=logging.ERROR)
 
@@ -83,16 +106,11 @@ logging.basicConfig(format='%(asctime)s.%(msecs)s:%(name)s:%(thread)d:%(levelnam
 #
 while (True):
   try:
-    # get the kafka host
-    kafka_host = os.environ["KAFKA_HOST"]
-    if (DEBUG): 
-      print("Connecting to " + kafka_host + "...")
-    # init kafka producer
+    # kafka producer
     producer = KeyedProducer( KafkaClient(kafka_host) )
     if (DEBUG): 
       if (producer):
         print("producer: OK")
-    # init kafka condumer 
     consumer = KafkaConsumer( TPC_REQUEST,
                               group_id=KAFKA_GRP_ID,
                               bootstrap_servers=[kafka_host] )
@@ -112,6 +130,7 @@ while (True):
                                               message.value))
       # send received message to processing
       result = processMessage(message.value)
+      time.sleep(1)
       if (DEBUG):
         # debug output
         print(result)
@@ -123,9 +142,9 @@ while (True):
                                 result.encode("UTF8"))
   except Exception as e: 
     pass 
-    z = e 
-    print ("Exception: %s" % z)
+    print ("Exception: %s" % e)
+    time.sleep(1)
   # print disconnect message, sleep for a while, and try to reconnect
-  print("Error: Kafka disconnected. Reconnecting...")
-  time.sleep(10)
+  print("Info: Kafka disconnected. Reconnecting...")
+  time.sleep(1)
 

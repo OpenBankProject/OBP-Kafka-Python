@@ -44,6 +44,10 @@
       "email":"ellie.y.9.gh@example.com",
       "password":"6f821300",
       "display_name":"Ellie Y.9.GH"
+    },{
+      "email":"test@email.me",
+      "password":"secret",
+      "display_name":"Kafka Test User"
     }],
     "accounts":[{
       "id":"f65e28a5-9abe-428f-85bb-6c3c38122adb",

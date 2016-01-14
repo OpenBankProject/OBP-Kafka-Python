@@ -11,6 +11,29 @@ transactions = data["transactions"]
 # use functions provided below as model for connecting to real data sources 
 #
 
+# getUser returns single user data 
+# accepts strings email and password as arguments 
+# returns string
+#
+def getUser(args):
+  global users 
+  # get arguments
+  email = args['email']
+  password = args['password']
+  if not email:
+    # return error if empty
+    return '{"error":"no argument given"}'
+  for u in users:
+    if email == u["email"] and password == u["password"]:
+      # assemble the return string
+      r  = '{'
+      r += '"display_name":"' + u["display_name"] + '"'
+      r += '}'
+      # return result
+      return r
+  # return empty if not found 
+  return '{}'
+
 # getBank returns single bank data
 # accepts string bankId as argument 
 # returns string
