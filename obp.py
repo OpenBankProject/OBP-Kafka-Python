@@ -27,6 +27,7 @@ def getUser(args):
     if email == u["email"] and password == u["password"]:
       # assemble the return string
       r  = '{'
+      r += '"email":"'        + u["email"]        + '",'
       r += '"display_name":"' + u["display_name"] + '"'
       r += '}'
       # return result
