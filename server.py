@@ -47,11 +47,11 @@ def processMessage(message):
   reqArgs = None 
   # regex match function name
   decoded = message.decode()
-  rFnc = re.match("^(.*?):{", decoded)
+  rFnc = re.match('^{"(.*?)":\["{', decoded)
   if rFnc != None:
     reqFunc = rFnc.group(1)
   # regex match function arguments
-  rArg = re.findall("[{,]\"(.*?)\":\"(.*?)\"", decoded)
+  rArg = re.findall('"{"(.*?)":"(.*?)"}', decoded)
   # create dictionary if not empty
   if rArg != None:
     reqArgs = dict((k, v) for (k, v) in rArg)
