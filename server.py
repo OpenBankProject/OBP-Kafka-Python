@@ -62,11 +62,6 @@ def processMessage(message):
   rFnc = getFuncName(decoded)
   if rFnc != None:
     reqFunc = rFnc[0]
-  # extract function arguments
-  rArg = getArguments(decoded, reqFunc)
-  # create dictionary if not empty
-  if rArg != None:
-    reqArgs = rArg
   # return error if empty
   if reqFunc == None:
     return '{"error":"empty request"}'
@@ -75,8 +70,13 @@ def processMessage(message):
     return '{"error":"llegal request"}'
   # check if function name exists in obp.py
   if (hasattr(obp, reqFunc)):
-    # execute function from obp.py and return result
-    return getattr(obp, reqFunc)(reqArgs)
+    # extract function arguments
+    reqArgs = getArguments(decoded, reqFunc)
+    # create dictionary if not empty
+    if reqArgs != None:
+      # execute function from obp.py and return result
+      return getattr(obp, reqFunc)(reqArgs)
+    return '{"error":"arguments missing"}'
   else:
     return '{"error":"unknown request"}'
 
