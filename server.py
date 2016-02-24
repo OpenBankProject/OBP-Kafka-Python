@@ -7,7 +7,8 @@ import obp
 import os
 import socket
 import struct
-import logging 
+import logging
+import json
 
 try:
   from kafka import KeyedProducer, KafkaConsumer, KafkaClient
@@ -39,22 +40,33 @@ def get_default_gateway_linux():
       # covert read field to ipv4 format
       return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
 
+def getFuncName(data):
+  j = json.loads(data)
+  return j.keys()
+
+def getArguments(data, command):
+  r = dict()
+  args = json.loads(data)[command]
+  for arg in args:
+    r.update(arg)  
+  return r
+
 # Split message and extract function name and arguments
 # then pass them to obp.py for further processing 
 #
 def processMessage(message):
   reqFunc = None 
   reqArgs = None 
-  # regex match function name
   decoded = message.decode()
-  rFnc = re.match('^{"(.*?)":\["{', decoded)
+  # extract function name 
+  rFnc = getFuncName(decoded)
   if rFnc != None:
-    reqFunc = rFnc.group(1)
-  # regex match function arguments
-  rArg = re.findall('"{"(.*?)":"(.*?)"}', decoded)
+    reqFunc = rFnc[0]
+  # extract function arguments
+  rArg = getArguments(decoded, reqFunc)
   # create dictionary if not empty
   if rArg != None:
-    reqArgs = dict((k, v) for (k, v) in rArg)
+    reqArgs = rArg
   # return error if empty
   if reqFunc == None:
     return '{"error":"empty request"}'
