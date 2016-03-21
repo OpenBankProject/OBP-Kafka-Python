@@ -47,8 +47,9 @@ def getFuncName(data):
 def getArguments(data, command):
   r = dict()
   args = json.loads(data)[command]
-  for arg in args:
-    r.update(arg)  
+  for k in args:
+    #print(k +":"+args[k])
+    r.update({k:args[k]})  
   return r
 
 # Split message and extract function name and arguments
@@ -62,6 +63,7 @@ def processMessage(message):
   rFnc = getFuncName(decoded)
   if rFnc != None:
     reqFunc = rFnc[0]
+  print(rFnc)
   # return error if empty
   if reqFunc == None:
     return '{"error":"empty request"}'
@@ -89,6 +91,7 @@ except KeyError:
 else:
   kafka_host = os.environ["ADVERTISED_HOST"] + ":9092"
 
+print("Connecting to " + kafka_host + "...")
 # try connecting to Kafka until successful
 disconnected = True
 while (disconnected):
@@ -103,8 +106,8 @@ while (disconnected):
 
 # send initial status messages
 try:
-  status.send_messages( TPC_REQUEST.encode("UTF8"), "status","ruok".encode("UTF8"))
-  status.send_messages( TPC_RESPONSE.encode("UTF8"), "status","imok".encode("UTF8"))
+  status.send_messages( TPC_REQUEST.encode("UTF8"), "status","check".encode("UTF8"))
+  status.send_messages( TPC_RESPONSE.encode("UTF8"), "status","check".encode("UTF8"))
 except Exception as e:
   pass 
 
@@ -129,6 +132,8 @@ while (True):
     if (DEBUG): 
       if (consumer):
         print("consumer: OK")
+      else:
+        print("consumer: ERROR")
     # wait for new message in queue 
     if (DEBUG): 
       print("Connected. Waiting for messages...")
@@ -140,9 +145,12 @@ while (True):
                                               message.offset,
                                               message.key,
                                               message.value))
+      # skip processing of internal status messages
+      if message.key == "status" and message.value.decode() == "check":
+        next
       # send received message to processing
       result = processMessage(message.value)
-      time.sleep(1)
+      #time.sleep(1)
       if (DEBUG):
         # debug output
         print(result)

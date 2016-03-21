@@ -2,10 +2,10 @@ import json
 # load mockup data from json file
 with open('example_import.json') as data_file:
   data = json.load(data_file)
-banks        = data["banks"]
-users        = data["users"]
-accounts     = data["accounts"]
-transactions = data["transactions"]
+banks        = data['banks']
+users        = data['users']
+accounts     = data['accounts']
+transactions = data['transactions']
 
 #
 # use functions provided below as model for connecting to real data sources 
@@ -22,18 +22,19 @@ def getUser(args):
   password = args['password']
   if not email:
     # return error if empty
-    return '{"error":"no argument given"}'
+    return json.dumps( {'error' : 'no argument given'} )
   for u in users:
-    if email == u["email"] and password == u["password"]:
-      # assemble the return string
-      r  = '{'
-      r += '"email":"'        + u["email"]        + '",'
-      r += '"display_name":"' + u["display_name"] + '"'
-      r += '}'
-      # return result
-      return r
+    if email == u['email'] and password == u['password']:
+      # format result 
+      r = { 'email'        : u['email'], 
+            'display_name' : u['display_name'], 
+            'roles'        : u['roles'] }
+      # create json
+      j = json.dumps(r)
+      # return json result
+      return j 
   # return empty if not found 
-  return '{}'
+  return json.dumps() 
 
 # getBank returns single bank data
 # accepts string bankId as argument 
@@ -45,21 +46,24 @@ def getBank(args):
   bankId = args['bankId']
   if not bankId:
     # return error if empty
-    return '{"error":"no argument given"}'
+    return json.dumps( {'error' : 'no argument given'} )
   for b in banks:
-    if bankId == b["id"]:
+    if bankId == b['id']:
       # assemble the return string
-      r  = '{'
-      r += '"bankId":"'        + b["id"]         + '",' 
-      r += '"shortBankName":"' + b["short_name"] + '",' 
-      r += '"fullBankName":"'  + b["full_name"]  + '",' 
-      r += '"logoURL":"'       + b["logo"]       + '",' 
-      r += '"websiteURL":"'    + b["website"]    + '"'
-      r += '}' 
+      s = { 'bankId'        : b['id'], 
+            'shortBankName' : b['short_name'], 
+            'fullBankName'  : b['full_name'], 
+            'logoURL'       : b['logo'], 
+            'websiteURL'    : b['website'] }
+      # create array for single result 
+      r = []
+      r.append(s)
+      # create json
+      j = json.dumps(r)
       # return result
-      return r
+      return j 
   # return empty if not found 
-  return '{}'
+  return json.dumps() 
 
 # getBanks returns list of all banks
 # accepts no arguments
@@ -67,24 +71,19 @@ def getBank(args):
 #
 def getBanks(args):
   global banks 
-  r  =  '{' 
+  r  =  [] 
   for b in banks:
     # assemble the return string
-    r  = '{'
-    r += '"bankId":"'        + b["id"]         + '",' 
-    r += '"shortBankName":"' + b["short_name"] + '",' 
-    r += '"fullBankName":"'  + b["full_name"]  + '",' 
-    r += '"logoURL":"'       + b["logo"]       + '",' 
-    r += '"websiteURL":"'    + b["website"]    + '"'
-    r += '}' 
-    r += ','
-  # remove trailing comma from result string
-  if r.endswith(","):
-    r  = r[:-1]  
-  # closing bracket
-  r  +=  '}' 
+    s = { 'bankId'        : b['id'], 
+          'shortBankName' : b['short_name'], 
+          'fullBankName'  : b['full_name'], 
+          'logoURL'       : b['logo'], 
+          'websiteURL'    : b['website'] }
+    r.append(s)
+  # create json
+  j = json.dumps(r)
   # return result
-  return r
+  return j 
 
 # getTransaction returns transaction data
 # accepts arguments: bankId, accountId, and transactionId 
@@ -97,26 +96,29 @@ def getTransaction(args):
   accountId = args['accountId']
   transactionId = args['transactionId']
   for t in transactions:
-    if bankId == t["this_account"]["bank"] and accountId == t["this_account"]["id"] and transactionId == t["id"]:
+    if bankId == t['this_account']['bank'] and accountId == t['this_account']['id'] and transactionId == t['id']:
       # assemble the return string
-      r  = '{'
-      r += '"bankId":"'          + t["this_account"]["bank"]   + '",' 
-      r += '"accountId":"'       + t["this_account"]["id"]     + '",' 
-      r += '"transactionId":"'   + t["id"]                     + '",' 
-      r += '"transactionType":"' + t["details"]["type"]        + '",' 
-      r += '"amount":"'          + t["details"]["value"]       + '",' 
-      r += '"currency":"'        + "GBP"                       + '",' 
-      r += '"description":"'     + t["details"]["description"] + '",' 
-      r += '"startDate":"'       + t["details"]["posted"]      + '",' 
-      r += '"finishDate":"'      + t["details"]["completed"]   + '",' 
-      r += '"balance":"'         + t["details"]["new_balance"] + '",' 
-      r += '"otherBankId":"'     + "obp-bank-x-g"              + '",'
-      r += '"otherAccountId":"'  + "2330135d-fca8-4268-838d-833074985209"  + '"'
-      r += '}' 
+      s = { 'bankId'          : t['this_account']['bank'],
+            'accountId'       : t['this_account']['id'],
+            'transactionId'   : t['id'],
+            'transactionType' : t['details']['type'],
+            'amount'          : t['details']['value'],
+            'currency'        : 'GBP',
+            'description'     : t['details']['description'],
+            'startDate'       : t['details']['posted'],
+            'finishDate'      : t['details']['completed'],
+            'balance'         : t['details']['new_balance'],
+            'otherBankId'     : 'obp-bank-x-g',
+            'otherAccountId'  : '2330135d-fca8-4268-838d-833074985209' }
+      # create array for single result 
+      r = []
+      r.append(s)
+      # create json
+      j = json.dumps(r)
       # return result
-      return r
+      return j 
   # return empty if not found 
-  return '{}'
+  return json.dumps() 
 
 # getTransactions returns list of transactions depending on queryParams
 # accepts arguments: bankId, accountId, and queryParams
@@ -128,32 +130,27 @@ def getTransactions(args):
   bankId  = args['bankId'] 
   accountId = args['accountId']
   queryParams = args['queryParams']
-  r  =  '{' 
+  r  =  [] 
   for t in transactions:
-    if bankId == t["this_account"]["bank"] and accountId == t["this_account"]["id"]:
+    if bankId == t['this_account']['bank'] and accountId == t['this_account']['id']:
       # assemble the return string
-      r += '{'
-      r += '"bankId":"'          + t["this_account"]["bank"]   + '",' 
-      r += '"accountId":"'       + t["this_account"]["id"]     + '",' 
-      r += '"transactionId":"'   + t["id"]                     + '",' 
-      r += '"transactionType":"' + t["details"]["type"]        + '",' 
-      r += '"amount":"'          + t["details"]["value"]       + '",' 
-      r += '"currency":"'        + "GBP"                       + '",' 
-      r += '"description":"'     + t["details"]["description"] + '",' 
-      r += '"startDate":"'       + t["details"]["posted"]      + '",' 
-      r += '"finishDate":"'      + t["details"]["completed"]   + '",' 
-      r += '"balance":"'         + t["details"]["new_balance"] + '",' 
-      r += '"otherBankId":"'     + "obp-bank-x-g"              + '",'
-      r += '"otherAccountId":"'  + "2330135d-fca8-4268-838d-833074985209"  + '"'
-      r += '}' 
-      r += ','
-  # remove trailing comma from result string
-  if r.endswith(","):
-    r  = r[:-1]  
-  # closing bracket
-  r  +=  '}' 
+      s = { 'bankId'          : t['this_account']['bank'], 
+            'accountId'       : t['this_account']['id'], 
+            'transactionId'   : t['id'], 
+            'transactionType' : t['details']['type'], 
+            'amount'          : t['details']['value'], 
+            'currency'        : 'GBP', 
+            'description'     : t['details']['description'], 
+            'startDate'       : t['details']['posted'], 
+            'finishDate'      : t['details']['completed'], 
+            'balance'         : t['details']['new_balance'], 
+            'otherBankId'     : 'obp-bank-x-g',
+            'otherAccountId'  : '2330135d-fca8-4268-838d-833074985209' }
+      r.append(s)
+  # create json
+  j = json.dumps(r)
   # return result
-  return r
+  return j 
 
 # getBankAccount returns bank account data 
 # accepts arguments: bankId and accountId
@@ -166,25 +163,28 @@ def getBankAccount(args):
   accountId = args['accountId']
   if not bankId or not accountId:
     # return error if empty
-    return '{"error":"no argument given"}'
+    return json.dumps( {'error' : 'no argument given'} )
   for a in accounts:
-    if bankId == a["bank"] and accountId == a["id"]:
+    if bankId == a['bank'] and accountId == a['id']:
       # assemble the return string
-      r  = '{'
-      r += '"accountId":"'       + a["id"]                    + '",' 
-      r += '"accountType":"'     + a["type"]                  + '",' 
-      r += '"balance":"'         + a["balance"]["amount"]     + '",' 
-      r += '"currency":"'        + a["balance"]["currency"]   + '",' 
-      r += '"name":"'            + a["owners"]                + '",' 
-      r += '"label":"'           + a["label"]                 + '",' 
-      r += '"swift_bic":"'       + "SWIFT_BIC"                + '",' 
-      r += '"iban":"'            + a["IBAN"]                  + '",' 
-      r += '"number":"'          + a["number"]                + '",'
-      r += '"bankId":"'          + a["bank"]                  + '",' 
-      r += '"lastUpdate":"'      + "2015-07-01T00:00:00.000Z" + '",'
-      r += '"accountHolder":"'   + a["owners"]                + '"' #deprecated?
-      r += '}' 
+      s = { 'accountId'     : a['id'], 
+            'accountType'   : a['type'],
+            'balance'       : a['balance']['amount'],
+            'currency'      : a['balance']['currency'],
+            'name'          : a['owners'],
+            'label'         : a['label'],
+            'swift_bic'     : 'SWIFT_BIC',
+            'iban'          : a['IBAN'],
+            'number'        : a['number'],
+            'bankId'        : a['bank'],
+            'lastUpdate'    : '2015-07-01T00:00:00.000Z',
+            'accountHolder' : a['owners'] }
+      # create array for single result 
+      r = []
+      r.append(s)
+      # create json
+      j = json.dumps(r)
       # return result
-      return r
+      return j 
   # return empty if not found 
-  return '{}'
+  return json.dumps() 
