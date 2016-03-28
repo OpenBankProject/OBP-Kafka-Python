@@ -34,7 +34,7 @@ def getUser(args):
       # return json result
       return j 
   # return empty if not found 
-  return json.dumps() 
+  return json.dumps({'':''}) 
 
 # getBank returns single bank data
 # accepts string bankId as argument 
@@ -63,7 +63,7 @@ def getBank(args):
       # return result
       return j 
   # return empty if not found 
-  return json.dumps() 
+  return json.dumps({'':''}) 
 
 # getBanks returns list of all banks
 # accepts no arguments
@@ -74,11 +74,13 @@ def getBanks(args):
   r  =  [] 
   for b in banks:
     # assemble the return string
-    s = { 'bankId'        : b['id'], 
-          'shortBankName' : b['short_name'], 
-          'fullBankName'  : b['full_name'], 
-          'logoURL'       : b['logo'], 
-          'websiteURL'    : b['website'] }
+    s = { 'bankId'             : b['id'], 
+          'shortBankName'      : b['short_name'], 
+          'fullBankName'       : b['full_name'], 
+          'logoURL'            : b['logo'], 
+          'nationalIdentifier' : 'NATIONAL-IDENTIFIER',
+          'swiftBic'           : 'SWIFT-BIC', 
+          'websiteURL'         : b['website'] }
     r.append(s)
   # create json
   j = json.dumps(r)
@@ -118,7 +120,7 @@ def getTransaction(args):
       # return result
       return j 
   # return empty if not found 
-  return json.dumps() 
+  return json.dumps({'':''}) 
 
 # getTransactions returns list of transactions depending on queryParams
 # accepts arguments: bankId, accountId, and queryParams
@@ -159,26 +161,36 @@ def getTransactions(args):
 def getBankAccount(args):
   global accounts 
   # get arguments
-  bankId = args['bankId']
-  accountId = args['accountId']
-  if not bankId or not accountId:
+  bankId = ''
+  if 'bankId' in args: 
+    bankId = args['bankId']
+  number = ''
+  if 'number' in args: 
+    number = args['number']
+  accountId = ''
+  if 'accountId' in args: 
+    accountId = args['accountId']
+  if not bankId and not accountId and not number:
     # return error if empty
     return json.dumps( {'error' : 'no argument given'} )
   for a in accounts:
-    if bankId == a['bank'] and accountId == a['id']:
+    if (bankId == a['bank'] and accountId == a['id']) or \
+       (bankId == a['bank'] and number == a['number']) or \
+       (not bankId and accountId == a['id']) or \
+       (not bankId and number    == a['number']): 
       # assemble the return string
       s = { 'accountId'     : a['id'], 
             'accountType'   : a['type'],
             'balance'       : a['balance']['amount'],
             'currency'      : a['balance']['currency'],
-            'name'          : a['owners'],
+            'name'          : a['owners'][0],
             'label'         : a['label'],
             'swift_bic'     : 'SWIFT_BIC',
             'iban'          : a['IBAN'],
             'number'        : a['number'],
             'bankId'        : a['bank'],
             'lastUpdate'    : '2015-07-01T00:00:00.000Z',
-            'accountHolder' : a['owners'] }
+            'accountHolder' : a['owners'][0] }
       # create array for single result 
       r = []
       r.append(s)
@@ -187,4 +199,4 @@ def getBankAccount(args):
       # return result
       return j 
   # return empty if not found 
-  return json.dumps() 
+  return json.dumps({'':''})

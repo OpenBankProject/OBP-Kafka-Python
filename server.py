@@ -32,7 +32,7 @@ def get_default_gateway_linux():
   with open("/proc/net/route") as fh:
     # read line by line
     for line in fh:
-      # split fields on space
+      #split fields on space
       fields = line.strip().split()
       # disregard fields we do not need
       if fields[1] != '00000000' or not int(fields[3], 16) & 2:
@@ -138,6 +138,7 @@ while (True):
     if (DEBUG): 
       print("Connected. Waiting for messages...")
     for message in consumer:
+      start_time = time.time()
       if (DEBUG):
         # debug output
         print("%s:%d:%d: key=%s value=%s" % ( message.topic, 
@@ -160,6 +161,7 @@ while (True):
         producer.send_messages( TPC_RESPONSE.encode("UTF8"), 
                                 message.key,
                                 result.encode("UTF8"))
+      print("--- %s seconds ---" % (time.time() - start_time))
   except Exception as e: 
     pass 
     print ("Exception: %s" % e)
