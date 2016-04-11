@@ -26,9 +26,12 @@ def getUser(args):
   for u in users:
     if email == u['email'] and password == u['password']:
       # format result 
-      r = { 'email'        : u['email'], 
-            'display_name' : u['display_name'], 
-            'roles'        : u['roles'] }
+      s = { 'email'        : u['email'], 
+            'display_name' : u['display_name'] } #, 
+            #'roles'        : u['roles'] }
+      # create array for single result 
+      r = []
+      r.append(s)
       # create json
       j = json.dumps(r)
       # return json result
@@ -50,11 +53,11 @@ def getBank(args):
   for b in banks:
     if bankId == b['id']:
       # assemble the return string
-      s = { 'bankId'        : b['id'], 
-            'shortBankName' : b['short_name'], 
-            'fullBankName'  : b['full_name'], 
-            'logoURL'       : b['logo'], 
-            'websiteURL'    : b['website'] }
+      s = { 'id'         : b['id'], 
+            'short_name' : b['short_name'], 
+            'full_name'  : b['full_name'], 
+            'logo'       : b['logo'], 
+            'website'    : b['website'] }
       # create array for single result 
       r = []
       r.append(s)
@@ -74,13 +77,11 @@ def getBanks(args):
   r  =  [] 
   for b in banks:
     # assemble the return string
-    s = { 'bankId'             : b['id'], 
-          'shortBankName'      : b['short_name'], 
-          'fullBankName'       : b['full_name'], 
-          'logoURL'            : b['logo'], 
-          'nationalIdentifier' : 'NATIONAL-IDENTIFIER',
-          'swiftBic'           : 'SWIFT-BIC', 
-          'websiteURL'         : b['website'] }
+    s = { 'id'                 : b['id'], 
+          'short_name'         : b['short_name'], 
+          'full_name'          : b['full_name'], 
+          'logo'               : b['logo'], 
+          'website'            : b['website'] }
     r.append(s)
   # create json
   j = json.dumps(r)
@@ -100,18 +101,24 @@ def getTransaction(args):
   for t in transactions:
     if bankId == t['this_account']['bank'] and accountId == t['this_account']['id'] and transactionId == t['id']:
       # assemble the return string
-      s = { 'bankId'          : t['this_account']['bank'],
-            'accountId'       : t['this_account']['id'],
-            'transactionId'   : t['id'],
-            'transactionType' : t['details']['type'],
-            'amount'          : t['details']['value'],
-            'currency'        : 'GBP',
-            'description'     : t['details']['description'],
-            'startDate'       : t['details']['posted'],
-            'finishDate'      : t['details']['completed'],
-            'balance'         : t['details']['new_balance'],
-            'otherBankId'     : 'obp-bank-x-g',
-            'otherAccountId'  : '2330135d-fca8-4268-838d-833074985209' }
+      s = { 'id'              : t['id'], 
+            'this_account'    : { 
+		'id'   : t['this_account']['id'], 
+		'bank' : t['this_account']['bank']
+            },
+            'counterparty'    : {
+                'name' : 'counterparty_name',
+                'account_number' : '2330135d-fca8-4268-838d-833074985209'
+	    },
+            'details'	      : {
+         	'type'        : t['details']['type'], 
+            	'description' : t['details']['description'], 
+            	'posted'      : t['details']['posted'], 
+            	'completed'   : t['details']['completed'], 
+            	'value'       : t['details']['value'], 
+            	'new_balance' : t['details']['new_balance'], 
+	    } 
+	}
       # create array for single result 
       r = []
       r.append(s)
@@ -136,18 +143,24 @@ def getTransactions(args):
   for t in transactions:
     if bankId == t['this_account']['bank'] and accountId == t['this_account']['id']:
       # assemble the return string
-      s = { 'bankId'          : t['this_account']['bank'], 
-            'accountId'       : t['this_account']['id'], 
-            'transactionId'   : t['id'], 
-            'transactionType' : t['details']['type'], 
-            'amount'          : t['details']['value'], 
-            'currency'        : 'GBP', 
-            'description'     : t['details']['description'], 
-            'startDate'       : t['details']['posted'], 
-            'finishDate'      : t['details']['completed'], 
-            'balance'         : t['details']['new_balance'], 
-            'otherBankId'     : 'obp-bank-x-g',
-            'otherAccountId'  : '2330135d-fca8-4268-838d-833074985209' }
+      s = { 'id'              : t['id'], 
+            'this_account'    : { 
+		'id'   : t['this_account']['id'], 
+		'bank' : t['this_account']['bank']
+            },
+            'counterparty'    : {
+                'name' : 'counterparty_name',
+                'account_number' : '2330135d-fca8-4268-838d-833074985209'
+	    },
+            'details'	      : {
+         	'type'        : t['details']['type'], 
+            	'description' : t['details']['description'], 
+            	'posted'      : t['details']['posted'], 
+            	'completed'   : t['details']['completed'], 
+            	'value'       : t['details']['value'], 
+            	'new_balance' : t['details']['new_balance'], 
+	    } 
+	  }
       r.append(s)
   # create json
   j = json.dumps(r)
@@ -179,18 +192,21 @@ def getBankAccount(args):
        (not bankId and accountId == a['id']) or \
        (not bankId and number    == a['number']): 
       # assemble the return string
-      s = { 'accountId'     : a['id'], 
-            'accountType'   : a['type'],
-            'balance'       : a['balance']['amount'],
-            'currency'      : a['balance']['currency'],
-            'name'          : a['owners'][0],
-            'label'         : a['label'],
-            'swift_bic'     : 'SWIFT_BIC',
-            'iban'          : a['IBAN'],
-            'number'        : a['number'],
-            'bankId'        : a['bank'],
-            'lastUpdate'    : '2015-07-01T00:00:00.000Z',
-            'accountHolder' : a['owners'][0] }
+      s = { 'id'     			: a['id'], 
+            'bank'       		: a['bank'],
+            'label'      		: a['label'],
+            'number'     		: a['number'],
+            'type'       		: a['type'],
+            'balance'    		: { 
+		'amount'   : a['balance']['amount'],
+                'currency' : a['balance']['currency'] 
+	    },
+            'IBAN'       		: a['IBAN'],
+            'owners'     		: a['owners'],
+            'generate_public_view'      : a['generate_public_view'],
+	    'generate_accountants_view' : a['generate_accountants_view'],
+            'generate_auditors_view'    : a['generate_auditors_view']
+      }
       # create array for single result 
       r = []
       r.append(s)
@@ -200,3 +216,41 @@ def getBankAccount(args):
       return j 
   # return empty if not found 
   return json.dumps({'':''})
+
+
+# getUsersAccounts returns all accounts owned by user 
+# accepts arguments: username
+# returns string
+#
+def getUserAccounts(args):
+  global accounts 
+  # get arguments
+  if 'email' in args: 
+    email = args['email']
+  if not email:
+    # return error if empty
+    return json.dumps( {'error' : 'no argument given'} )
+  r = []
+  for a in accounts:
+    if (email in a['owners']):
+      # assemble the return string
+      s = { 'id'     			: a['id'], 
+            'bank'       		: a['bank'],
+            'label'      		: a['label'],
+            'number'     		: a['number'],
+            'type'       		: a['type'],
+            'balance'    		: { 
+		'amount'   : a['balance']['amount'],
+                'currency' : a['balance']['currency'] 
+	    },
+            'IBAN'       		: a['IBAN'],
+            'owners'     		: a['owners'],
+            'generate_public_view'      : a['generate_public_view'],
+	    'generate_accountants_view' : a['generate_accountants_view'],
+            'generate_auditors_view'    : a['generate_auditors_view']
+      }
+      r.append(s)
+  # create json
+  j = json.dumps(r)
+  # return result
+  return j 
