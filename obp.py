@@ -218,21 +218,21 @@ def getBankAccount(args):
   return json.dumps({'':''})
 
 
-# getUsersAccounts returns all accounts owned by user 
-# accepts arguments: username
+# getUserAccounts returns all accounts owned by user 
+# accepts arguments: username 
 # returns string
 #
 def getUserAccounts(args):
   global accounts 
   # get arguments
-  if 'email' in args: 
-    email = args['email']
-  if not email:
+  if 'username' in args: 
+    username = args['username']
+  if not username:
     # return error if empty
     return json.dumps( {'error' : 'no argument given'} )
   r = []
   for a in accounts:
-    if (email in a['owners']):
+    if (username in a['owners']):
       # assemble the return string
       s = { 'id'     			: a['id'], 
             'bank'       		: a['bank'],
@@ -254,3 +254,41 @@ def getUserAccounts(args):
   j = json.dumps(r)
   # return result
   return j 
+
+# getAllAccounts returns all accounts user can view
+# accepts arguments: username 
+# returns string
+#
+def getPublicAccounts(args):
+  global accounts 
+  # get arguments
+  if 'username' in args: 
+    username = args['username']
+  if not username:
+    # return error if empty
+    return json.dumps( {'error' : 'no argument given'} )
+  r = []
+  for a in accounts:
+    print ( a['generate_public_view'])
+    if ( a['generate_public_view'] == True and username not in a['owners'] ):
+      # assemble the return string
+      s = { 'id'     			: a['id'], 
+            'bank'       		: a['bank'],
+            'label'      		: a['label'],
+            'number'     		: a['number'],
+            'type'       		: a['type'],
+            'balance'    		: { 
+		'amount'   : a['balance']['amount'],
+                'currency' : a['balance']['currency'] 
+	    },
+            'IBAN'       		: a['IBAN'],
+            'owners'     		: a['owners'],
+            'generate_public_view'      : a['generate_public_view'],
+	    'generate_accountants_view' : a['generate_accountants_view'],
+            'generate_auditors_view'    : a['generate_auditors_view']
+      }
+      r.append(s)
+  # create json
+  j = json.dumps(r)
+  # return result
+  return j
