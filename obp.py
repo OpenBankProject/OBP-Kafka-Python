@@ -217,6 +217,50 @@ def getBankAccount(args):
   # return empty if not found 
   return json.dumps({'':''})
 
+# getBankAccountis returns bank accounts 
+# accepts arguments: list of bankIds and list of accountIds
+# returns string
+#
+def getBankAccounts(args):
+  global accounts 
+  # get arguments
+  bankIds = []
+  if 'bankIds' in args: 
+    bankIds = args['bankIds'].split(',')
+  accountIds = [] 
+  if 'accountIds' in args: 
+    accountIds = args['accountIds'].split(',')
+  if not bankIds and not accountIds:
+    # return error if empty
+    return json.dumps( {'error' : 'no argument given'} )
+  r = []
+  for a in accounts:
+    if ( a['id'] in accountIds): 
+      # assemble the return string
+      s = { 'id'     			: a['id'], 
+            'bank'       		: a['bank'],
+            'label'      		: a['label'],
+            'number'     		: a['number'],
+            'type'       		: a['type'],
+            'balance'    		: { 
+		'amount'   : a['balance']['amount'],
+                'currency' : a['balance']['currency'] 
+	    },
+            'IBAN'       		: a['IBAN'],
+            'owners'     		: a['owners'],
+            'generate_public_view'      : a['generate_public_view'],
+	    'generate_accountants_view' : a['generate_accountants_view'],
+            'generate_auditors_view'    : a['generate_auditors_view']
+      }
+      # add to result
+      r.append(s)
+  # create json
+  j = json.dumps(r)
+  # return result
+  return j 
+  # return empty if not found 
+  return json.dumps({'':''})
+
 
 # getUserAccounts returns all accounts owned by user 
 # accepts arguments: username 
