@@ -18,7 +18,7 @@ transactions = data['transactions']
 def getUser(args):
   global users 
   # get arguments
-  email = args['username']
+  email = args['name']
   password = args['password']
   if not email:
     # return error if empty
@@ -282,20 +282,20 @@ def getBankAccounts(args):
 
 
 # getUserAccounts returns all accounts owned by user 
-# accepts arguments: username 
+# accepts arguments: name 
 # returns string
 #
 def getUserAccounts(args):
   global accounts 
   # get arguments
-  if 'username' in args: 
-    username = args['username']
-  if not username:
+  if 'name' in args: 
+    name = args['name']
+  if not name:
     # return error if empty
     return json.dumps( {'error' : 'no argument given'} )
   l = []
   for a in accounts:
-    if (username in a['owners']):
+    if (name in a['owners']):
       # assemble the return string
       s = { 'id'     			: a['id'], 
             'bank'       		: a['bank'],
@@ -323,21 +323,21 @@ def getUserAccounts(args):
   return j 
 
 # getAllAccounts returns all accounts user can view
-# accepts arguments: username 
+# accepts arguments: name 
 # returns string
 #
 def getPublicAccounts(args):
   global accounts 
   # get arguments
-  if 'username' in args: 
-    username = args['username']
-  if not username:
+  if 'name' in args: 
+    name = args['name']
+  if not name:
     # return error if empty
     return json.dumps( {'error' : 'no argument given'} )
   l = []
   for a in accounts:
     print ( a['generate_public_view'])
-    if ( a['generate_public_view'] == True and username not in a['owners'] ):
+    if ( a['generate_public_view'] == True and name not in a['owners'] ):
       # assemble the return string
       s = { 'id'     			: a['id'], 
             'bank'       		: a['bank'],

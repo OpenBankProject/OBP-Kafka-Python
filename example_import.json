@@ -15,35 +15,35 @@
     "users":[{
       "email":"robert.x.0.gh@example.com",
       "password":"3e3a3102",
-      "display_name":"Robert X.0.GH"
+      "display_name":"robert.x.0.gh@example.com"
     },{
       "email":"susan.x.0.gh@example.com",
       "password":"58da7854",
-      "display_name":"Susan X.0.GH"
+      "display_name":"susan.x.0.gh@example.com"
     },{
       "email":"anil.x.0.gh@example.com",
       "password":"90a66977",
-      "display_name":"Anil X.0.GH"
+      "display_name":"Anil_X.0.GH"
     },{
       "email":"ellie.x.0.gh@example.com",
       "password":"a2953da3",
-      "display_name":"Ellie X.0.GH"
+      "display_name":"ellie.x.0.gh@example.com"
     },{
       "email":"robert.y.9.gh@example.com",
       "password":"c9a641df",
-      "display_name":"Robert Y.9.GH"
+      "display_name":"robert.y.9.gh@example.com"
     },{
       "email":"susan.y.9.gh@example.com",
       "password":"b7c78269",
-      "display_name":"Susan Y.9.GH"
+      "display_name":"susan.y.9.gh@example.com"
     },{
       "email":"anil.y.9.gh@example.com",
       "password":"fec9556f",
-      "display_name":"Anil Y.9.GH"
+      "display_name":"anil.y.9.gh@example.com"
     },{
       "email":"ellie.y.9.gh@example.com",
       "password":"6f821300",
-      "display_name":"Ellie Y.9.GH"
+      "display_name":"ellie.y.9.gh@example.com"
     },{
       "email":"test@email.me",
       "password":"secret",
