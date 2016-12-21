@@ -18,7 +18,7 @@ transactions = data['transactions']
 def getUser(args):
   global users 
   # get arguments
-  email = args['email']
+  email = args['username']
   password = args['password']
   if not email:
     # return error if empty
@@ -28,10 +28,12 @@ def getUser(args):
       # format result 
       s = { 'email'        : u['email'], 
             'display_name' : u['display_name'] } #, 
-            #'roles'        : u['roles'] }
-      # create array for single result 
-      r = []
-      r.append(s)
+            #'roles'       : u['roles'] }
+      # create array for single result
+      r  =  { 'count': 1,
+              'pager': '',
+              'state': '',
+              'data' : [s] }
       # create json
       j = json.dumps(r)
       # return json result
@@ -53,14 +55,15 @@ def getBank(args):
   for b in banks:
     if bankId == b['id']:
       # assemble the return string
-      s = { 'id'         : b['id'], 
-            'short_name' : b['short_name'], 
-            'full_name'  : b['full_name'], 
+      s = { 'bankId'     : b['id'],
+            'name'       : b['full_name'],
             'logo'       : b['logo'], 
-            'website'    : b['website'] }
-      # create array for single result 
-      r = []
-      r.append(s)
+            'url'        : b['website'] }
+      # create array for single result
+      r  =  { 'count': 1,
+              'pager': '',
+              'state': '',
+              'data' : [s] }
       # create json
       j = json.dumps(r)
       # return result
@@ -73,16 +76,20 @@ def getBank(args):
 # returns string
 #
 def getBanks(args):
-  global banks 
-  r  =  [] 
+  global banks
+  l  = []
   for b in banks:
     # assemble the return string
-    s = { 'id'                 : b['id'], 
-          'short_name'         : b['short_name'], 
-          'full_name'          : b['full_name'], 
-          'logo'               : b['logo'], 
-          'website'            : b['website'] }
-    r.append(s)
+    s = {   'bankId'       : b['id'],
+            'name'         : b['full_name'],
+            'logo'         : b['logo'],
+            'url'          : b['website'] }
+
+    l.append(s)
+  r  =  { 'count': 1,
+          'pager': '',
+          'state': '',
+          'data' : l }
   # create json
   j = json.dumps(r)
   # return result
@@ -119,9 +126,11 @@ def getTransaction(args):
             	'new_balance' : t['details']['new_balance'], 
 	    } 
 	}
-      # create array for single result 
-      r = []
-      r.append(s)
+      # create array for single result
+      r  =  { 'count': 1,
+              'pager': '',
+              'state': '',
+              'data' : [s] }
       # create json
       j = json.dumps(r)
       # return result
@@ -139,7 +148,7 @@ def getTransactions(args):
   bankId  = args['bankId'] 
   accountId = args['accountId']
   queryParams = args['queryParams']
-  r  =  [] 
+  l  =  []
   for t in transactions:
     if bankId == t['this_account']['bank'] and accountId == t['this_account']['id']:
       # assemble the return string
@@ -161,7 +170,11 @@ def getTransactions(args):
             	'new_balance' : t['details']['new_balance'], 
 	    } 
 	  }
-      r.append(s)
+      l.append(s)
+  r  =  { 'count': 1,
+          'pager': '',
+          'state': '',
+          'data' : l }
   # create json
   j = json.dumps(r)
   # return result
@@ -208,8 +221,10 @@ def getBankAccount(args):
             'generate_auditors_view'    : a['generate_auditors_view']
       }
       # create array for single result 
-      r = []
-      r.append(s)
+      r  =  { 'count': 1,
+              'pager': '',
+              'state': '',
+              'data' : [s] }
       # create json
       j = json.dumps(r)
       # return result
@@ -233,9 +248,9 @@ def getBankAccounts(args):
   if not bankIds and not accountIds:
     # return error if empty
     return json.dumps( {'error' : 'no argument given'} )
-  r = []
+  l = []
   for a in accounts:
-    if ( a['id'] in accountIds): 
+    if ( a['id'] in accountIds and a['bank'] in bankIds ): 
       # assemble the return string
       s = { 'id'     			: a['id'], 
             'bank'       		: a['bank'],
@@ -253,7 +268,11 @@ def getBankAccounts(args):
             'generate_auditors_view'    : a['generate_auditors_view']
       }
       # add to result
-      r.append(s)
+      l.append(s)
+  r  =  { 'count': 1,
+          'pager': '',
+          'state': '',
+          'data' : l }
   # create json
   j = json.dumps(r)
   # return result
@@ -274,7 +293,7 @@ def getUserAccounts(args):
   if not username:
     # return error if empty
     return json.dumps( {'error' : 'no argument given'} )
-  r = []
+  l = []
   for a in accounts:
     if (username in a['owners']):
       # assemble the return string
@@ -293,7 +312,11 @@ def getUserAccounts(args):
 	    'generate_accountants_view' : a['generate_accountants_view'],
             'generate_auditors_view'    : a['generate_auditors_view']
       }
-      r.append(s)
+      l.append(s)
+  r  =  { 'count': 1,
+          'pager': '',
+          'state': '',
+          'data' : l }
   # create json
   j = json.dumps(r)
   # return result
@@ -311,7 +334,7 @@ def getPublicAccounts(args):
   if not username:
     # return error if empty
     return json.dumps( {'error' : 'no argument given'} )
-  r = []
+  l = []
   for a in accounts:
     print ( a['generate_public_view'])
     if ( a['generate_public_view'] == True and username not in a['owners'] ):
@@ -331,7 +354,11 @@ def getPublicAccounts(args):
 	    'generate_accountants_view' : a['generate_accountants_view'],
             'generate_auditors_view'    : a['generate_auditors_view']
       }
-      r.append(s)
+      l.append(s)
+  r  =  { 'count': 1,
+          'pager': '',
+          'state': '',
+          'data' : l }
   # create json
   j = json.dumps(r)
   # return result

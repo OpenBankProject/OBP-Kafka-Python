@@ -41,15 +41,17 @@ def get_default_gateway_linux():
       return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
 
 def getFuncName(data):
-  j = json.loads(data)
-  return j.keys()
+  j = json.loads(data)["north"]
+  return j
 
-def getArguments(data, command):
+def getArguments(data):
   r = dict()
-  args = json.loads(data)[command]
-  for k in args:
-    #print(k +":"+args[k])
-    r.update({k:args[k]})  
+  args = json.loads(data)
+  for item in args.items():
+    k = item[0]
+    v = item[1]
+    if (k != "north"):
+      r.update({k:v})
   return r
 
 # Split message and extract function name and arguments
@@ -60,10 +62,8 @@ def processMessage(message):
   reqArgs = None 
   decoded = message.decode()
   # extract function name 
-  rFnc = getFuncName(decoded)
-  if rFnc != None:
-    reqFunc = rFnc[0]
-  print(rFnc)
+  reqFunc = getFuncName(decoded)
+  print(reqFunc)
   # return error if empty
   if reqFunc == None:
     return '{"error":"empty request"}'
@@ -73,7 +73,8 @@ def processMessage(message):
   # check if function name exists in obp.py
   if (hasattr(obp, reqFunc)):
     # extract function arguments
-    reqArgs = getArguments(decoded, reqFunc)
+    reqArgs = getArguments(decoded)
+    print(reqArgs)
     # create dictionary if not empty
     if reqArgs != None:
       # execute function from obp.py and return result
