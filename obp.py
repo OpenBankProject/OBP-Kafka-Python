@@ -95,6 +95,30 @@ def getBanks(args):
   # return result
   return j 
 
+# getChallengeThreshold returns maximal amount of money 
+# that can be transfered without the challenge
+# accepts arguments:  transactionRequestType, accountId, currency, userId 
+# returns string
+#
+def getChallengeThreshold(args):
+  transactionRequestType  = args['transactionRequestType'] 
+  accountId = args['accountId']
+  currency = args['currency']
+  userId = args['userId']
+
+  s = { 'value'  : '1000' }
+
+  r  =  { 'count': 1,
+          'pager': '',
+          'state': '',
+          'data' : [s] }
+
+  # create json
+  j = json.dumps(r)
+  # return result
+  return j
+
+
 # getTransaction returns transaction data
 # accepts arguments: bankId, accountId, and transactionId 
 # returns string
