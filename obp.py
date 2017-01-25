@@ -106,7 +106,8 @@ def getChallengeThreshold(args):
   currency = args['currency']
   userId = args['userId']
 
-  s = { 'value'  : '1000' }
+  s = { 'limit'    : '1000',
+        'currency' : 'EUR' }
 
   r  =  { 'count': 1,
           'pager': '',
