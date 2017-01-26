@@ -1,4 +1,5 @@
 import json
+import uuid
 # load mockup data from json file
 with open('example_import.json') as data_file:
   data = json.load(data_file)
@@ -119,6 +120,47 @@ def getChallengeThreshold(args):
   # return result
   return j
 
+
+# createChallenge returns id of challenge
+# accepts arguments:  transactionRequestType, userId, transactionRequestId
+# returns string
+#
+def createChallenge(args):
+  transactionRequestType  = args['transactionRequestType']
+  userId = args['userId']
+  transactionRequestId = args['transactionRequestId']
+
+  s = { 'challengeId' : str(uuid.uuid4()) }
+
+  r  =  { 'count': 1,
+          'pager': '',
+          'state': '',
+          'data' : [s] }
+
+  # create json
+  j = json.dumps(r)
+  # return result
+  return j
+
+# validateChallengeAnswer returns is it challenge satisfied
+# accepts arguments:  challengeId, hashOfSuppliedAnswer
+# returns string
+#
+def validateChallengeAnswer(args):
+  challengeId  = args['challengeId']
+  hashOfSuppliedAnswer = args['hashOfSuppliedAnswer']
+
+  s = { 'answer' : 'true' }
+
+  r  =  { 'count': 1,
+          'pager': '',
+          'state': '',
+          'data' : [s] }
+
+  # create json
+  j = json.dumps(r)
+  # return result
+  return j
 
 # getTransaction returns transaction data
 # accepts arguments: bankId, accountId, and transactionId 
