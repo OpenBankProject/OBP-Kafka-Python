@@ -12432,5 +12432,21 @@
       "detail":"TEST DETAIL",
       "channel":"Test Channel",
       "actual_date":"2015-02-14T00:00:00.000Z"
-    }]
+    }],
+    "fxrates": [
+      {
+        "from_currency_code": "EUR",
+        "to_currency_code": "USD",
+        "conversion_value": 1.07,
+        "inverse_conversion_value": 0.93,
+        "effective_date": "2015-09-02T00:00:00.000Z"
+      },
+      {
+        "from_currency_code": "USD",
+        "to_currency_code": "AMD",
+        "conversion_value": 0.93,
+        "inverse_conversion_value": 1.07,
+        "effective_date": "2015-09-02T00:00:00.000Z"
+      }
+    ]
   }
