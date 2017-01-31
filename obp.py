@@ -7,6 +7,7 @@ banks        = data['banks']
 users        = data['users']
 accounts     = data['accounts']
 transactions = data['transactions']
+fxrates      = data['fxrates']
 
 #
 # use functions provided below as model for connecting to real data sources 
@@ -432,3 +433,59 @@ def getPublicAccounts(args):
   j = json.dumps(r)
   # return result
   return j
+
+  
+# return the latest single FXRate data specified by the fields: fromCurrencyCode and toCurrencyCode.
+# If it is not found by (fromCurrencyCode, toCurrencyCode) order, it will try (toCurrencyCode, fromCurrencyCode) order.
+# accepts string fromCurrencyCode and toCurrencyCode as arguments
+# returns string
+#
+
+def getCurrentFxRate(args):
+  global fxrates 
+  # get argument
+  fromCurrencyCode = args['fromCurrencyCode']
+  toCurrencyCode = args['toCurrencyCode']
+  if not fromCurrencyCode:
+    # return error if empty
+    return json.dumps( {'error' : 'no argument given'} )
+  if not toCurrencyCode:
+    # return error if empty
+    return json.dumps( {'error' : 'no argument given'} )
+  for f in fxrates:
+    # find FXRate by (fromCurrencyCode, toCurrencyCode), the normal order  
+    if fromCurrencyCode == f['from_currency_code'] and toCurrencyCode == f['to_currency_code']:
+      # assemble the return string
+      s = { 'from_currency_code'        : f['from_currency_code'],
+            'to_currency_code'          : f['to_currency_code'],
+            'conversion_value'          : f['conversion_value'], 
+            'inverse_conversion_value'  : f['inverse_conversion_value'],
+            'effective_date'            : f['effective_date']}
+      # create array for single result
+      r  =  { 'count': 1,
+              'pager': '',
+              'state': '',
+              'data' : [s] }
+      # create json
+      j = json.dumps(r)
+      # return result
+      return j 
+    # find FXRate by (toCurrencyCode, fromCurrencyCode), the reverse order
+    elif toCurrencyCode  == f['from_currency_code'] and  fromCurrencyCode== f['to_currency_code']:
+      # assemble the return string
+      s = { 'from_currency_code'        : f['to_currency_code'],
+            'to_currency_code'          : f['from_currency_code'],
+            'conversion_value'          : f['conversion_value'], 
+            'inverse_conversion_value'  : f['inverse_conversion_value'],
+            'effective_date'            : f['effective_date']}
+      # create array for single result
+      r  =  { 'count': 1,
+              'pager': '',
+              'state': '',
+              'data' : [s] }
+      # create json
+      j = json.dumps(r)
+      # return result
+      return j
+  # return empty if not found 
+  return json.dumps({'':''})
