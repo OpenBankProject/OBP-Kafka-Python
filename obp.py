@@ -8,7 +8,7 @@ users        = data['users']
 accounts     = data['accounts']
 transactions = data['transactions']
 fxrates      = data['fxrates']
-
+counterparties = data['counterparties']
 #
 # use functions provided below as model for connecting to real data sources 
 #
@@ -245,6 +245,23 @@ def getTransactions(args):
           'pager': '',
           'state': '',
           'data' : l }
+  # create json
+  j = json.dumps(r)
+  # return result
+  return j 
+
+# Saves a transaction with amount @amt and counterparty @counterparty for account @account. 
+# Returns the id of the saved transaction.
+# TODO This method is just for test, have not been totally implemented. The new transaction should be stored somewhere, such as the example_import.json
+def saveTransaction(args):
+  global transactions 
+  # assemble the return string
+  s = { 'transactionId'              : '123456789' }
+  # create array for single result
+  r  =  { 'count': 1,
+          'pager': '',
+          'state': '',
+          'data' : [s] }
   # create json
   j = json.dumps(r)
   # return result
@@ -489,3 +506,86 @@ def getCurrentFxRate(args):
       return j
   # return empty if not found 
   return json.dumps({'':''})
+
+# getCounterpartyByCounterpartyId returns single Counterparty data
+# accepts string counterpartyId as argument
+# returns string
+#
+def getCounterpartyByCounterpartyId(args):
+  global counterparties 
+  # get argument
+  counterpartyId = args['counterpartyId']
+  if not counterpartyId:
+    # return error if empty
+    return json.dumps( {'error' : 'no argument given'} )
+  for c in counterparties:
+    if counterpartyId == c['counterparty_id']:
+      # assemble the return string
+      s = { 'name'                          : c['name'],
+            'created_by_user_id'            : c['created_by_user_id'],
+            'this_bankid'                   : c['this_bankid'], 
+            'this_account_id'               : c['this_account_id'],
+            'this_viewid'                   : c['this_viewid'],
+            'other_bankid'                  : c['other_bankid'],
+            'other_account_id'              : c['other_account_id'],
+            'other_account_provider'        : c['other_account_provider'],
+            'counterparty_id'               : c['counterparty_id'],
+            'other_bank_routing_scheme'     : c['other_bank_routing_scheme'],
+            'other_account_routing_scheme'  : c['other_account_routing_scheme'],
+            'other_bank_routing_address'    : c['other_bank_routing_address'],
+            'other_account_routing_address' : c['other_account_routing_address'],
+            'is_beneficiary'                : c['is_beneficiary']}
+      # create array for single result
+      r  =  { 'count': 1,
+              'pager': '',
+              'state': '',
+              'data' : [s] }
+      # create json
+      j = json.dumps(r)
+      # return result
+      return j 
+  # return empty if not found 
+  return json.dumps({'':''}) 
+    
+# getCounterpartyByIban returns single Counterparty data
+# accepts string Iban(otherAccountRoutingAddress) as argument
+# (This is a helper method that assumes OtherAccountRoutingScheme=IBAN)
+# returns string
+#
+def getCounterpartyByIban(args):
+  global counterparties 
+  # get argument
+  otherAccountRoutingAddress = args['otherAccountRoutingAddress']
+  OtherAccountRoutingScheme = args['OtherAccountRoutingScheme']
+  if not otherAccountRoutingAddress or not OtherAccountRoutingScheme:
+    # return error if empty
+    return json.dumps( {'error' : 'no argument given'} )
+  for c in counterparties:
+    if otherAccountRoutingAddress == c['other_account_routing_address'] and OtherAccountRoutingScheme == c['other_account_routing_scheme']:
+      # assemble the return string
+      s = { 'name'                          : c['name'],
+            'created_by_user_id'            : c['created_by_user_id'],
+            'this_bankid'                   : c['this_bankid'], 
+            'this_account_id'               : c['this_account_id'],
+            'this_viewid'                   : c['this_viewid'],
+            'other_bankid'                  : c['other_bankid'],
+            'other_account_id'              : c['other_account_id'],
+            'other_account_provider'        : c['other_account_provider'],
+            'counterparty_id'               : c['counterparty_id'],
+            'other_bank_routing_scheme'     : c['other_bank_routing_scheme'],
+            'other_account_routing_scheme'  : c['other_account_routing_scheme'],
+            'other_bank_routing_address'    : c['other_bank_routing_address'],
+            'other_account_routing_address' : c['other_account_routing_address'],
+            'is_beneficiary'                : c['is_beneficiary']}
+      # create array for single result
+      r  =  { 'count': 1,
+              'pager': '',
+              'state': '',
+              'data' : [s] }
+      # create json
+      j = json.dumps(r)
+      # return result
+      return j 
+  # return empty if not found 
+  return json.dumps({'':''}) 
+    
