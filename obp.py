@@ -123,13 +123,15 @@ def getChallengeThreshold(args):
 
 
 # createChallenge returns id of challenge
-# accepts arguments:  transactionRequestType, userId, transactionRequestId
+# accepts arguments:  transactionRequestType, userId, transactionRequestId, bankId, accountId
 # returns string
 #
 def createChallenge(args):
   transactionRequestType  = args['transactionRequestType']
   userId = args['userId']
   transactionRequestId = args['transactionRequestId']
+  bankId = args['bankId']
+  accountId = args['accountId']
 
   s = { 'challengeId' : str(uuid.uuid4()) }
 
