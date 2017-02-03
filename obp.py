@@ -7,8 +7,10 @@ banks        = data['banks']
 users        = data['users']
 accounts     = data['accounts']
 transactions = data['transactions']
-fxrates      = data['fxrates']
+fxRates      = data['fx_rates']
 counterparties = data['counterparties']
+transactionRequestTypes = data['transaction_request_types']
+
 #
 # use functions provided below as model for connecting to real data sources 
 #
@@ -459,7 +461,7 @@ def getPublicAccounts(args):
 #
 
 def getCurrentFxRate(args):
-  global fxrates 
+  global fxRates 
   # get argument
   fromCurrencyCode = args['fromCurrencyCode']
   toCurrencyCode = args['toCurrencyCode']
@@ -469,7 +471,7 @@ def getCurrentFxRate(args):
   if not toCurrencyCode:
     # return error if empty
     return json.dumps( {'error' : 'no argument given'} )
-  for f in fxrates:
+  for f in fxRates:
     # find FXRate by (fromCurrencyCode, toCurrencyCode), the normal order  
     if fromCurrencyCode == f['from_currency_code'] and toCurrencyCode == f['to_currency_code']:
       # assemble the return string
@@ -523,10 +525,10 @@ def getCounterpartyByCounterpartyId(args):
       # assemble the return string
       s = { 'name'                          : c['name'],
             'created_by_user_id'            : c['created_by_user_id'],
-            'this_bankid'                   : c['this_bankid'], 
+            'this_bank_id'                   : c['this_bank_id'], 
             'this_account_id'               : c['this_account_id'],
-            'this_viewid'                   : c['this_viewid'],
-            'other_bankid'                  : c['other_bankid'],
+            'this_view_id'                   : c['this_view_id'],
+            'other_bank_id'                  : c['other_bank_id'],
             'other_account_id'              : c['other_account_id'],
             'other_account_provider'        : c['other_account_provider'],
             'counterparty_id'               : c['counterparty_id'],
@@ -556,19 +558,19 @@ def getCounterpartyByIban(args):
   global counterparties 
   # get argument
   otherAccountRoutingAddress = args['otherAccountRoutingAddress']
-  OtherAccountRoutingScheme = args['OtherAccountRoutingScheme']
-  if not otherAccountRoutingAddress or not OtherAccountRoutingScheme:
+  otherAccountRoutingScheme  = args['otherAccountRoutingScheme']
+  if not otherAccountRoutingAddress or not otherAccountRoutingScheme:
     # return error if empty
     return json.dumps( {'error' : 'no argument given'} )
   for c in counterparties:
-    if otherAccountRoutingAddress == c['other_account_routing_address'] and OtherAccountRoutingScheme == c['other_account_routing_scheme']:
+    if otherAccountRoutingAddress == c['other_account_routing_address'] and otherAccountRoutingScheme == c['other_account_routing_scheme']:
       # assemble the return string
       s = { 'name'                          : c['name'],
             'created_by_user_id'            : c['created_by_user_id'],
-            'this_bankid'                   : c['this_bankid'], 
+            'this_bank_id'                  : c['this_bank_id'], 
             'this_account_id'               : c['this_account_id'],
-            'this_viewid'                   : c['this_viewid'],
-            'other_bankid'                  : c['other_bankid'],
+            'this_view_id'                  : c['this_view_id'],
+            'other_bank_id'                 : c['other_bank_id'],
             'other_account_id'              : c['other_account_id'],
             'other_account_provider'        : c['other_account_provider'],
             'counterparty_id'               : c['counterparty_id'],
@@ -589,3 +591,39 @@ def getCounterpartyByIban(args):
   # return empty if not found 
   return json.dumps({'':''}) 
     
+# getTransactionRequestTypeCharge returns single Charge data
+# accepts arguments: bankId, accountId, viewId and transactionRequestType
+# returns string
+#
+def getTransactionRequestTypeCharge(args):
+  global transactionRequestTypes 
+  # get argument
+  # It just for test reponse, no authenticate or exsiting check here
+  bankId = args['bankId']
+  accountId  = args['accountId']
+  viewId  = args['viewId']
+  transactionRequestType  = args['transactionRequestType']
+  
+  if not transactionRequestType:
+    # return error if empty
+    return json.dumps( {'error' : 'no argument given'} )
+  for t in transactionRequestTypes:
+    if transactionRequestType == t['transaction_request_type_id']:
+      # assemble the return string
+      s = { 
+            'transaction_request_type_id'    : t['transaction_request_type_id'],
+            'bank_id'    : t['bank_id'],
+            'charge_amount'    : t['charge_amount'],
+            'charge_summary'   : t['charge_summary'], 
+            'charge_currency'  : t['charge_currency']}
+      # create array for single result
+      r  =  { 'count': 1,
+              'pager': '',
+              'state': '',
+              'data' : [s] }
+      # create json
+      j = json.dumps(r)
+      # return result
+      return j 
+  # return empty if not found 
+  return json.dumps({'':''})     

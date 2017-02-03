@@ -12433,7 +12433,7 @@
       "channel":"Test Channel",
       "actual_date":"2015-02-14T00:00:00.000Z"
     }],
-    "fxrates": [
+    "fx_rates": [
       {
         "from_currency_code": "EUR",
         "to_currency_code": "USD",
@@ -12453,10 +12453,10 @@
       {
         "created_by_user_id": "c7b6cb47-cb96-4441-8801-35b57456753a",
         "name": "",
-        "this_bankid": "obp-bank-x-gh",
+        "this_bank_id": "obp-bank-x-gh",
         "this_account_id": "e0ec24be-5ab1-4760-9189-ad280228c134",
-        "this_viewid": "owner",
-        "other_bankid": "obp-bank-x-gh",
+        "this_view_id": "owner",
+        "other_bank_id": "obp-bank-x-gh",
         "other_account_id": "e0ec24be-5ab1-4760-9189-ad280228c134",
         "other_account_provider": "",
         "counterparty_id": "a635f6ff-c26b-46ad-8194-2406bacceae4",
@@ -12465,6 +12465,48 @@
         "other_bank_routing_address": "",
         "other_account_routing_address": "DE12 1234 5123 4510 2207 8077 877",
         "is_beneficiary": "true"
+      }
+    ],
+    "transaction_request_types": [
+      {
+        "id": "1",
+        "transaction_request_type_id": "SANDBOX_TAN",
+        "charge_amount": "1",
+        "update_date": "",
+        "create_date": "",
+        "charge_summary": "Total charges for completed transaction",
+        "bank_id": "gh.29.uk",
+        "charge_currency": "GBP"
+      },
+      {
+        "id": "2",
+        "transaction_request_type_id": "SEPA",
+        "charge_amount": "2",
+        "update_date": "",
+        "create_date": "",
+        "charge_summary": "Total charges for completed transaction",
+        "bank_id": "gh.29.uk",
+        "charge_currency": "GBP"
+      },
+      {
+        "id": "3",
+        "charge_amount": "3",
+        "update_date": "",
+        "create_date": "",
+        "charge_summary": "Total charges for completed transaction",
+        "transaction_request_type_id": "COUNTERPARTY",
+        "bank_id": "gh.29.uk",
+        "charge_currency": "GBP"
+      },
+      {
+        "id": "4",
+        "charge_amount": "4",
+        "update_date": "",
+        "create_date": "",
+        "charge_summary": "Total charges for completed transaction",
+        "transaction_request_type_id": "FREE_FORM",
+        "bank_id": "gh.29.uk",
+        "charge_currency": "GBP"
       }
     ]
   }
