@@ -254,16 +254,47 @@ def getTransactions(args):
 
 # Saves a transaction with amount @amt and counterparty @counterparty for account @account. 
 # Returns the id of the saved transaction.
-# TODO This method is just for test, have not been totally implemented. The new transaction should be stored somewhere, such as the example_import.json
 def saveTransaction(args):
-  global transactions 
+  global transactions
+  
+  # assemble the persistent data
+  transactionIdNew = str(uuid.uuid4())
+  # 
+  tranactionNew = {
+      "id": transactionIdNew,
+      "this_account": {
+          "id": args['accountId'],
+          "bank": "obp-bank-x-gh",
+          "currency": args['currency']
+      },
+      "counterparty": {
+          "name": "TESOBE",
+          "other_account_id": args['otherAccountId'],
+          "other_account_currency": args['otherAccountCurrency']
+      },
+      "details": {
+          "type": args['transactionType'],
+          "description": args['description'],
+          "posted": "",
+          "completed": "",
+          "new_balance": "",
+          "value": args['amount']
+      }
+  }
+  
+  # append new element to the transactions attribute
+  transactions.append(tranactionNew)
+  # write the Json to lcal JSON file "example_import.json"
+  with open('example_import.json', 'w') as f:
+      json.dump(data, f)
+  
   # assemble the return string
-  s = { 'transactionId'              : '123456789' }
+  s = {'transactionId': transactionIdNew}
   # create array for single result
-  r  =  { 'count': 1,
-          'pager': '',
-          'state': '',
-          'data' : [s] }
+  r = {'count': 1,
+       'pager': '',
+       'state': '',
+       'data': [s]}
   # create json
   j = json.dumps(r)
   # return result

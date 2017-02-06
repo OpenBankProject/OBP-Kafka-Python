@@ -11963,8 +11963,28 @@
         "completed":"2015-09-24T00:00:00.000Z",
         "new_balance":"7724.41",
         "value":"-9.03"
+      },
+      "counterparty": {
+        "other_account_currency": "GBP",
+        "name": "TESOBE",
+        "other_account_id": "e0ec24be-5ab1-4760-9189-ad280228c134"
+      },
+      "this_account": {
+        "currency": "GBP",
+        "id": "e0ec24be-5ab1-4760-9189-ad280228c134",
+        "bank": "obp-bank-x-gh"
+      },
+      "id": "d1e016f2-636f-4708-ad58-8d07a70cb895",
+      "details": {
+        "description": "A description for the transaction to be created",
+        "completed": "",
+        "value": "-1010.52",
+        "new_balance": "",
+        "type": "AC",
+        "posted": ""
       }
-    }],
+    }
+    ],
     "branches":[{
       "id":"1234-d640",
       "bank_id":"obp-bank-x-gh",
