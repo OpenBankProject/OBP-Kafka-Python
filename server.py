@@ -41,8 +41,11 @@ def get_default_gateway_linux():
       return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
 
 def getFuncName(data):
-  j = json.loads(data)["north"]
-  return j
+  jdata = json.loads(data)
+  if 'target' in jdata:
+    return json.loads(data)["name"]+(json.loads(data)["target"].title())
+  else:
+    return json.loads(data)["name"]
 
 def getArguments(data):
   r = dict()
@@ -50,7 +53,7 @@ def getArguments(data):
   for item in args.items():
     k = item[0]
     v = item[1]
-    if (k != "north"):
+    if (k != "name" and k != "target"):
       r.update({k:v})
   return r
 

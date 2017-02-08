@@ -22,7 +22,7 @@ transactionRequestTypes = data['transaction_request_types']
 def getUser(args):
   global users 
   # get arguments
-  email = args['name']
+  email = args['user']
   password = args['password']
   if not email:
     # return error if empty
@@ -31,12 +31,12 @@ def getUser(args):
     if email == u['email'] and password == u['password']:
       # format result 
       s = { 'email'        : u['email'], 
-            'display_name' : u['display_name'] } #, 
-            #'roles'       : u['roles'] }
+            'displayName'  : u['display_name']}
       # create array for single result
-      r  =  { 'count': 1,
+      r  =  { 'count': '',
               'pager': '',
               'state': '',
+              'target': 'user',
               'data' : [s] }
       # create json
       j = json.dumps(r)
@@ -64,9 +64,10 @@ def getBank(args):
             'logo'       : b['logo'], 
             'url'        : b['website'] }
       # create array for single result
-      r  =  { 'count': 1,
+      r  =  { 'count': '',
               'pager': '',
               'state': '',
+              'target': 'bank',
               'data' : [s] }
       # create json
       j = json.dumps(r)
@@ -90,9 +91,10 @@ def getBanks(args):
             'url'          : b['website'] }
 
     l.append(s)
-  r  =  { 'count': 1,
+  r  =  { 'count': '',
           'pager': '',
           'state': '',
+          'target': 'banks',
           'data' : l }
   # create json
   j = json.dumps(r)
@@ -113,9 +115,10 @@ def getChallengeThreshold(args):
   s = { 'limit'    : '1000',
         'currency' : 'EUR' }
 
-  r  =  { 'count': 1,
+  r  =  { 'count': '',
           'pager': '',
           'state': '',
+          'target': 'challengeThreshold',
           'data' : [s] }
 
   # create json
@@ -137,9 +140,10 @@ def createChallenge(args):
 
   s = { 'challengeId' : str(uuid.uuid4()) }
 
-  r  =  { 'count': 1,
+  r  =  { 'count': '',
           'pager': '',
           'state': '',
+          'target': 'challengeThreshold',
           'data' : [s] }
 
   # create json
@@ -157,9 +161,10 @@ def validateChallengeAnswer(args):
 
   s = { 'answer' : 'true' }
 
-  r  =  { 'count': 1,
+  r  =  { 'count': '',
           'pager': '',
           'state': '',
+          'target': 'challengeThreshold',
           'data' : [s] }
 
   # create json
@@ -199,9 +204,10 @@ def getTransaction(args):
 	    } 
 	}
       # create array for single result
-      r  =  { 'count': 1,
+      r  =  { 'count': '',
               'pager': '',
               'state': '',
+              'target': 'transaction',
               'data' : [s] }
       # create json
       j = json.dumps(r)
@@ -243,9 +249,10 @@ def getTransactions(args):
 	    } 
 	  }
       l.append(s)
-  r  =  { 'count': 1,
+  r  =  { 'count': '',
           'pager': '',
           'state': '',
+          'target': 'transactions',
           'data' : l }
   # create json
   j = json.dumps(r)
@@ -254,7 +261,7 @@ def getTransactions(args):
 
 # Saves a transaction with amount @amt and counterparty @counterparty for account @account. 
 # Returns the id of the saved transaction.
-def saveTransaction(args):
+def putTransaction(args):
   global transactions
   
   # assemble the persistent data
@@ -291,9 +298,10 @@ def saveTransaction(args):
   # assemble the return string
   s = {'transactionId': transactionIdNew}
   # create array for single result
-  r = {'count': 1,
+  r = {'count': '',
        'pager': '',
        'state': '',
+       'target': 'transaction',
        'data': [s]}
   # create json
   j = json.dumps(r)
@@ -341,9 +349,10 @@ def getBankAccount(args):
             'generate_auditors_view'    : a['generate_auditors_view']
       }
       # create array for single result 
-      r  =  { 'count': 1,
+      r  =  { 'count': '',
               'pager': '',
               'state': '',
+              'target': 'account',
               'data' : [s] }
       # create json
       j = json.dumps(r)
@@ -389,9 +398,10 @@ def getBankAccounts(args):
       }
       # add to result
       l.append(s)
-  r  =  { 'count': 1,
+  r  =  { 'count': '',
           'pager': '',
           'state': '',
+          'target': 'accounts',
           'data' : l }
   # create json
   j = json.dumps(r)
@@ -433,9 +443,10 @@ def getUserAccounts(args):
             'generate_auditors_view'    : a['generate_auditors_view']
       }
       l.append(s)
-  r  =  { 'count': 1,
+  r  =  { 'count': '',
           'pager': '',
           'state': '',
+          'target': 'accounts',
           'data' : l }
   # create json
   j = json.dumps(r)
@@ -475,9 +486,10 @@ def getPublicAccounts(args):
             'generate_auditors_view'    : a['generate_auditors_view']
       }
       l.append(s)
-  r  =  { 'count': 1,
+  r  =  { 'count': '',
           'pager': '',
           'state': '',
+          'target': 'accounts',
           'data' : l }
   # create json
   j = json.dumps(r)
@@ -512,9 +524,10 @@ def getCurrentFxRate(args):
             'inverse_conversion_value'  : f['inverse_conversion_value'],
             'effective_date'            : f['effective_date']}
       # create array for single result
-      r  =  { 'count': 1,
+      r  =  { 'count': '',
               'pager': '',
               'state': '',
+              'target': 'fx',
               'data' : [s] }
       # create json
       j = json.dumps(r)
