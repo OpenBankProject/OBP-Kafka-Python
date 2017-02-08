@@ -312,7 +312,7 @@ def putTransaction(args):
 # accepts arguments: bankId and accountId
 # returns string
 #
-def getBankAccount(args):
+def getAccount(args):
   global accounts 
   # get arguments
   bankId = ''
@@ -412,20 +412,22 @@ def getBankAccounts(args):
 
 
 # getUserAccounts returns all accounts owned by user 
-# accepts arguments: name 
+# accepts arguments: userId 
 # returns string
 #
-def getUserAccounts(args):
+def getAccounts(args):
   global accounts 
   # get arguments
-  if 'name' in args: 
-    name = args['name']
-  if not name:
+  if 'bankId' in args: 
+    bankId = args['bankId']
+  if 'userId' in args: 
+    userId = args['userId']
+  if not userId:
     # return error if empty
     return json.dumps( {'error' : 'no argument given'} )
   l = []
   for a in accounts:
-    if (name in a['owners']):
+    if (userId in a['owners'] and bankId == a['bank']):
       # assemble the return string
       s = { 'id'     			: a['id'], 
             'bank'       		: a['bank'],
