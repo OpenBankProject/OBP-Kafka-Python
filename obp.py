@@ -185,24 +185,21 @@ def getTransaction(args):
   for t in transactions:
     if bankId == t['this_account']['bank'] and accountId == t['this_account']['id'] and transactionId == t['id']:
       # assemble the return string
-      s = { 'id'              : t['id'], 
-            'this_account'    : { 
-		'id'   : t['this_account']['id'], 
-		'bank' : t['this_account']['bank']
-            },
-            'counterparty'    : {
-                'name' : 'counterparty_name',
-                'account_number' : '2330135d-fca8-4268-838d-833074985209'
-	    },
-            'details'	      : {
-         	'type'        : t['details']['type'], 
-            	'description' : t['details']['description'], 
-            	'posted'      : t['details']['posted'], 
-            	'completed'   : t['details']['completed'], 
-            	'value'       : t['details']['value'], 
-            	'new_balance' : t['details']['new_balance'], 
-	    } 
-	}
+      s = {'transactionId'	: t['id'], 
+	   'accountId'		: t['this_account']['id'], 
+           'amount'		: t['details']['value'], 
+	   'bankId'		: t['this_account']['bank'],
+           'completedDate'	: t['details']['completed'], 
+           'counterpartyId' 	: '2330135d-fca8-4268-838d-833074985209',
+           'counterpartyName'	: 'counterparty_name',
+           'currency'		: 'EUR', 
+           'description'	: t['details']['description'], 
+           'newBalanceAmount'	: t['details']['new_balance'], 
+           'newBalanceCurrency': 'EUR', 
+           'postedDate'	: t['details']['posted'], 
+           'type'		: t['details']['type'], 
+           'userId'		: '' 
+	  }
       # create array for single result
       r  =  { 'count': '',
               'pager': '',
@@ -225,28 +222,25 @@ def getTransactions(args):
   # get arguments
   bankId  = args['bankId'] 
   accountId = args['accountId']
-  queryParams = args['queryParams']
+  #queryParams = args['queryParams']
   l  =  []
   for t in transactions:
     if bankId == t['this_account']['bank'] and accountId == t['this_account']['id']:
       # assemble the return string
-      s = { 'id'              : t['id'], 
-            'this_account'    : { 
-		'id'   : t['this_account']['id'], 
-		'bank' : t['this_account']['bank']
-            },
-            'counterparty'    : {
-                'name' : 'counterparty_name',
-                'account_number' : '2330135d-fca8-4268-838d-833074985209'
-	    },
-            'details'	      : {
-         	'type'        : t['details']['type'], 
-            	'description' : t['details']['description'], 
-            	'posted'      : t['details']['posted'], 
-            	'completed'   : t['details']['completed'], 
-            	'value'       : t['details']['value'], 
-            	'new_balance' : t['details']['new_balance'], 
-	    } 
+      s = {'transactionId'	: t['id'], 
+	   'accountId'		: t['this_account']['id'], 
+           'amount'		: t['details']['value'], 
+	   'bankId'		: t['this_account']['bank'],
+           'completedDate'	: t['details']['completed'], 
+           'counterpartyId' 	: '2330135d-fca8-4268-838d-833074985209',
+           'counterpartyName'	: 'counterparty_name',
+           'currency'		: 'EUR', 
+           'description'	: t['details']['description'], 
+           'newBalanceAmount'	: t['details']['new_balance'], 
+           'newBalanceCurrency': 'EUR', 
+           'postedDate'	: t['details']['posted'], 
+           'type'		: t['details']['type'], 
+           'userId'		: '' 
 	  }
       l.append(s)
   r  =  { 'count': '',
@@ -333,16 +327,14 @@ def getAccount(args):
        (not bankId and accountId == a['id']) or \
        (not bankId and number    == a['number']): 
       # assemble the return string
-      s = { 'id'     			: a['id'], 
-            'bank'       		: a['bank'],
+      s = { 'accountId'			: a['id'], 
+            'bankId'       		: a['bank'],
             'label'      		: a['label'],
             'number'     		: a['number'],
             'type'       		: a['type'],
-            'balance'    		: { 
-		'amount'   : a['balance']['amount'],
-                'currency' : a['balance']['currency'] 
-	    },
-            'IBAN'       		: a['IBAN'],
+            'balanceAmount'    		: a['balance']['amount'],
+            'balanceCurrency'           : a['balance']['currency'],
+            'iban'       		: a['IBAN'],
             'owners'     		: a['owners'],
             'generate_public_view'      : a['generate_public_view'],
 	    'generate_accountants_view' : a['generate_accountants_view'],
@@ -361,57 +353,7 @@ def getAccount(args):
   # return empty if not found 
   return json.dumps({'':''})
 
-# getBankAccountis returns bank accounts 
-# accepts arguments: list of bankIds and list of accountIds
-# returns string
-#
-def getBankAccounts(args):
-  global accounts 
-  # get arguments
-  bankIds = []
-  if 'bankIds' in args: 
-    bankIds = args['bankIds'].split(',')
-  accountIds = [] 
-  if 'accountIds' in args: 
-    accountIds = args['accountIds'].split(',')
-  if not bankIds and not accountIds:
-    # return error if empty
-    return json.dumps( {'error' : 'no argument given'} )
-  l = []
-  for a in accounts:
-    if ( a['id'] in accountIds and a['bank'] in bankIds ): 
-      # assemble the return string
-      s = { 'id'     			: a['id'], 
-            'bank'       		: a['bank'],
-            'label'      		: a['label'],
-            'number'     		: a['number'],
-            'type'       		: a['type'],
-            'balance'    		: { 
-		'amount'   : a['balance']['amount'],
-                'currency' : a['balance']['currency'] 
-	    },
-            'IBAN'       		: a['IBAN'],
-            'owners'     		: a['owners'],
-            'generate_public_view'      : a['generate_public_view'],
-	    'generate_accountants_view' : a['generate_accountants_view'],
-            'generate_auditors_view'    : a['generate_auditors_view']
-      }
-      # add to result
-      l.append(s)
-  r  =  { 'count': '',
-          'pager': '',
-          'state': '',
-          'target': 'accounts',
-          'data' : l }
-  # create json
-  j = json.dumps(r)
-  # return result
-  return j 
-  # return empty if not found 
-  return json.dumps({'':''})
-
-
-# getUserAccounts returns all accounts owned by user 
+# getAccounts returns all accounts owned by user 
 # accepts arguments: userId 
 # returns string
 #
@@ -422,23 +364,20 @@ def getAccounts(args):
     bankId = args['bankId']
   if 'userId' in args: 
     userId = args['userId']
-  if not userId:
-    # return error if empty
+  if not userId or not bankId:
     return json.dumps( {'error' : 'no argument given'} )
   l = []
   for a in accounts:
     if (userId in a['owners'] and bankId == a['bank']):
       # assemble the return string
-      s = { 'id'     			: a['id'], 
-            'bank'       		: a['bank'],
+      s = { 'accountId'     			: a['id'], 
+            'bankId'       		: a['bank'],
             'label'      		: a['label'],
             'number'     		: a['number'],
             'type'       		: a['type'],
-            'balance'    		: { 
-		'amount'   : a['balance']['amount'],
-                'currency' : a['balance']['currency'] 
-	    },
-            'IBAN'       		: a['IBAN'],
+            'balanceAmount'             : a['balance']['amount'],
+            'balanceCurrency'           : a['balance']['currency'],
+            'iban'       		: a['IBAN'],
             'owners'     		: a['owners'],
             'generate_public_view'      : a['generate_public_view'],
 	    'generate_accountants_view' : a['generate_accountants_view'],
@@ -455,50 +394,6 @@ def getAccounts(args):
   # return result
   return j 
 
-# getAllAccounts returns all accounts user can view
-# accepts arguments: name 
-# returns string
-#
-def getPublicAccounts(args):
-  global accounts 
-  # get arguments
-  if 'name' in args: 
-    name = args['name']
-  if not name:
-    # return error if empty
-    return json.dumps( {'error' : 'no argument given'} )
-  l = []
-  for a in accounts:
-    print ( a['generate_public_view'])
-    if ( a['generate_public_view'] == True and name not in a['owners'] ):
-      # assemble the return string
-      s = { 'id'     			: a['id'], 
-            'bank'       		: a['bank'],
-            'label'      		: a['label'],
-            'number'     		: a['number'],
-            'type'       		: a['type'],
-            'balance'    		: { 
-		'amount'   : a['balance']['amount'],
-                'currency' : a['balance']['currency'] 
-	    },
-            'IBAN'       		: a['IBAN'],
-            'owners'     		: a['owners'],
-            'generate_public_view'      : a['generate_public_view'],
-	    'generate_accountants_view' : a['generate_accountants_view'],
-            'generate_auditors_view'    : a['generate_auditors_view']
-      }
-      l.append(s)
-  r  =  { 'count': '',
-          'pager': '',
-          'state': '',
-          'target': 'accounts',
-          'data' : l }
-  # create json
-  j = json.dumps(r)
-  # return result
-  return j
-
-  
 # return the latest single FXRate data specified by the fields: fromCurrencyCode and toCurrencyCode.
 # If it is not found by (fromCurrencyCode, toCurrencyCode) order, it will try (toCurrencyCode, fromCurrencyCode) order.
 # accepts string fromCurrencyCode and toCurrencyCode as arguments
