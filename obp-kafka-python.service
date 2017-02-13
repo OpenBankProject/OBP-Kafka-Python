@@ -1,0 +1,16 @@
+[Unit]
+Description=OBP Kafka Python
+After=kafka.service
+Requires=kafka.service
+
+[Service]
+Type=simple
+User=deploy
+Group=deploy
+SyslogIdentifier=OBP-Kafka-Python
+Restart=on-failure
+WorkingDirectory=/home/deploy/OBP-Kafka-Python
+ExecStart=/usr/bin/stdbuf -oL /usr/bin/python ./server.py
+
+[Install]
+WantedBy=multi-user.target
