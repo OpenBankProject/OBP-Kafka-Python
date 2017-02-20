@@ -22,13 +22,13 @@ transactionRequestTypes = data['transaction_request_types']
 def getUser(args):
   global users 
   # get arguments
-  email = args['user']
+  username = args['username']
   password = args['password']
-  if not email:
+  if not username:
     # return error if empty
     return json.dumps( {'error' : 'no argument given'} )
   for u in users:
-    if email == u['email'] and password == u['password']:
+    if username == u['email'] and password == u['password']:
       # format result 
       s = { 'email'        : u['email'], 
             'displayName'  : u['display_name']}
@@ -111,6 +111,7 @@ def getChallengeThreshold(args):
   accountId = args['accountId']
   currency = args['currency']
   userId = args['userId']
+  username = args['username']
 
   s = { 'limit'    : '1000',
         'currency' : 'EUR' }
@@ -134,6 +135,7 @@ def getChallengeThreshold(args):
 def createChallenge(args):
   transactionRequestType  = args['transactionRequestType']
   userId = args['userId']
+  username = args['username']
   transactionRequestId = args['transactionRequestId']
   bankId = args['bankId']
   accountId = args['accountId']
@@ -364,11 +366,15 @@ def getAccounts(args):
     bankId = args['bankId']
   if 'userId' in args: 
     userId = args['userId']
-  if not userId or not bankId:
+  if 'username' in args: 
+    username = args['username']
+  else:
+    username = ""
+  if not userId or not username or not bankId:
     return json.dumps( {'error' : 'no argument given'} )
   l = []
   for a in accounts:
-    if (userId in a['owners'] and bankId == a['bank']):
+    if ( (userId in a['owners'] or username in a['owners'] ) and bankId == a['bank']):
       # assemble the return string
       s = { 'accountId'     			: a['id'], 
             'bankId'       		: a['bank'],
