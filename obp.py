@@ -265,25 +265,21 @@ def putTransaction(args):
 
   tranactionNew = {
       "id": transactionIdNew,
-      "type": args['transactionType'],
-      "transaction_request_type": args['transactionRequestType'],
-      "amount": args['amount'],
-      "currency": args['currency'],
       "description": args['description'],
+      "transaction_request_type": args['transactionRequestType'],
+      "to_currency": args['toCurrency'],
+      "to_amount": args['toAmount'],
       "charge_policy": args['chargePolicy'],
-      "from_bankId": args['fromBankId'],
-      "from_accountId": args['fromAccountId'],
-      "to_account": {
-          "bank_id": args['toBankId'],
-          "account_id": args['toAccountId'],
-      },
-      "to_counterparty": {
-          "counterparty_id": args['counterpartyId'],
-          "counterparty_other_account_routing_scheme": args['counterpartyOtherAccountRoutingScheme'],
-          "counterparty_other_account_routing_address": args['counterpartyOtherAccountRoutingAddress'],
-          "counterparty_other_bank_routing_scheme": args['counterpartyOtherBankRoutingScheme'],
-          "counterparty_other_bank_routing_address": args['counterpartyOtherBankRoutingAddress']
-      }
+      "from_bank_id": args['fromBankId'],
+      "from_account_id": args['fromAccountId'],
+      "to_bank_id": args['toBankId'],
+      "to_account_id": args['toAccountId'],
+      "to_counterparty_id": args['toCounterpartyId'],
+      "to_counterparty_other_bank_routing_address": args['toCounterpartyOtherBankRoutingAddress'],
+      "to_counterparty_other_account_routing_address": args['toCounterpartyOtherAccountRoutingAddress'],
+      "to_counterparty_other_account_routing_scheme": args['toCounterpartyOtherAccountRoutingScheme'],
+      "to_counterparty_other_bank_routing_scheme": args['toCounterpartyOtherBankRoutingScheme'],
+      "type": args['type']
   }
 
   # append new element to the transactions attribute
