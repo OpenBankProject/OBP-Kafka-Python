@@ -3,7 +3,6 @@
 import time
 import re
 import site
-import obp
 import os
 import socket
 import struct
@@ -40,6 +39,7 @@ def get_default_gateway_linux():
       # covert read field to ipv4 format
       return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
 
+
 def getFuncName(data):
   jdata = json.loads(data)
   if 'action' in jdata:
@@ -58,7 +58,6 @@ def getArguments(data):
     if (k != "name" and k != "target"):
       r.update({k:v})
   return r
-
 # Split message and extract function name and arguments
 # then pass them to obp.py for further processing 
 #
@@ -67,7 +66,12 @@ def processMessage(message):
   reqArgs = None 
   decoded = message.decode()
   # extract function name 
-  reqFunc = getFuncName(decoded)
+  version = getVersion(decoded)
+  print(version)
+  # check if function name exists in obp.py
+  module_name='obp_v'+version
+  obp = importlib.import_module(module_name)
+  reqFunc = obp.getFuncName(decoded)
   print(reqFunc)
   # return error if empty
   if reqFunc == None:
@@ -75,10 +79,9 @@ def processMessage(message):
   # return error if function name if not alphanumeric 
   if not re.match("^[a-zA-Z0-9_-]*$", reqFunc):
     return '{"error":"llegal request"}'
-  # check if function name exists in obp.py
   if (hasattr(obp, reqFunc)):
     # extract function arguments
-    reqArgs = getArguments(decoded)
+    reqArgs = obp.getArguments(decoded)
     print(reqArgs)
     # create dictionary if not empty
     if reqArgs != None:
