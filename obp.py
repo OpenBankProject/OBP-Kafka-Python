@@ -103,7 +103,7 @@ def getBanks(args):
 
 # getChallengeThreshold returns maximal amount of money 
 # that can be transfered without the challenge
-# accepts arguments:  transactionRequestType, accountId, currency, userId 
+# accepts arguments:  bankId, accountId, viewId, transactionRequestType, currency, userId, userName
 # returns string
 #
 def getChallengeThreshold(args):
@@ -127,6 +127,30 @@ def getChallengeThreshold(args):
   # return result
   return j
 
+# getChargeLevel returns charge level 
+# accepts arguments:  bankId, accountId, viewId, transactionRequestType, currency, userId, userName
+# returns string
+#
+def getChargeLevel(args):
+    transactionRequestType  = args['transactionRequestType']
+    accountId = args['accountId']
+    currency = args['currency']
+    userId = args['userId']
+    username = args['username']
+
+    s = { 'amount'    : '0.001',
+          'currency' : 'EUR' }
+
+    r  =  { 'count': '',
+            'pager': '',
+            'state': '',
+            'target': 'chargeLevel',
+            'data' : [s] }
+
+    # create json
+    j = json.dumps(r)
+    # return result
+    return j
 
 # createChallenge returns id of challenge
 # accepts arguments:  transactionRequestType, userId, transactionRequestId, bankId, accountId
