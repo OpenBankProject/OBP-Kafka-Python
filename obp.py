@@ -103,7 +103,7 @@ def getBanks(args):
 
 # getChallengeThreshold returns maximal amount of money 
 # that can be transfered without the challenge
-# accepts arguments:  transactionRequestType, accountId, currency, userId 
+# accepts arguments:  bankId, accountId, viewId, transactionRequestType, currency, userId, userName
 # returns string
 #
 def getChallengeThreshold(args):
@@ -127,6 +127,30 @@ def getChallengeThreshold(args):
   # return result
   return j
 
+# getChargeLevel returns charge level 
+# accepts arguments:  bankId, accountId, viewId, transactionRequestType, currency, userId, userName
+# returns string
+#
+def getChargeLevel(args):
+    transactionRequestType  = args['transactionRequestType']
+    accountId = args['accountId']
+    currency = args['currency']
+    userId = args['userId']
+    username = args['username']
+
+    s = { 'amount'    : '0.001',
+          'currency' : 'EUR' }
+
+    r  =  { 'count': '',
+            'pager': '',
+            'state': '',
+            'target': 'chargeLevel',
+            'data' : [s] }
+
+    # create json
+    j = json.dumps(r)
+    # return result
+    return j
 
 # createChallenge returns id of challenge
 # accepts arguments:  transactionRequestType, userId, transactionRequestId, bankId, accountId
@@ -262,29 +286,26 @@ def putTransaction(args):
   
   # assemble the persistent data
   transactionIdNew = str(uuid.uuid4())
-  # 
+
   tranactionNew = {
       "id": transactionIdNew,
-      "this_account": {
-          "id": args['accountId'],
-          "bank": "obp-bank-x-gh",
-          "currency": args['currency']
-      },
-      "counterparty": {
-          "name": "TESOBE",
-          "other_account_id": args['otherAccountId'],
-          "other_account_currency": args['otherAccountCurrency']
-      },
-      "details": {
-          "type": args['transactionType'],
-          "description": args['description'],
-          "posted": "",
-          "completed": "",
-          "new_balance": "",
-          "value": args['amount']
-      }
+      "description": args['description'],
+      "transaction_request_type": args['transactionRequestType'],
+      "to_currency": args['toCurrency'],
+      "to_amount": args['toAmount'],
+      "charge_policy": args['chargePolicy'],
+      "from_bank_id": args['fromBankId'],
+      "from_account_id": args['fromAccountId'],
+      "to_bank_id": args['toBankId'],
+      "to_account_id": args['toAccountId'],
+      "to_counterparty_id": args['toCounterpartyId'],
+      "to_counterparty_other_bank_routing_address": args['toCounterpartyOtherBankRoutingAddress'],
+      "to_counterparty_other_account_routing_address": args['toCounterpartyOtherAccountRoutingAddress'],
+      "to_counterparty_other_account_routing_scheme": args['toCounterpartyOtherAccountRoutingScheme'],
+      "to_counterparty_other_bank_routing_scheme": args['toCounterpartyOtherBankRoutingScheme'],
+      "type": args['type']
   }
-  
+
   # append new element to the transactions attribute
   transactions.append(tranactionNew)
   # write the Json to lcal JSON file "example_import.json"
@@ -355,18 +376,18 @@ def getAccount(args):
   # return empty if not found 
   return json.dumps({'':''})
 
-# getAccounts returns all accounts owned by user 
+# getAccounts returns all accounts owned by user
 # accepts arguments: userId 
 # returns string
 #
 def getAccounts(args):
-  global accounts 
+  global accounts
   # get arguments
-  if 'bankId' in args: 
+  if 'bankId' in args:
     bankId = args['bankId']
-  if 'userId' in args: 
+  if 'userId' in args:
     userId = args['userId']
-  if 'username' in args: 
+  if 'username' in args:
     username = args['username']
   else:
     username = ""
@@ -376,7 +397,7 @@ def getAccounts(args):
   for a in accounts:
     if ( (userId in a['owners'] or username in a['owners'] ) and bankId == a['bank']):
       # assemble the return string
-      s = { 'accountId'     			: a['id'], 
+      s = { 'accountId'     			: a['id'],
             'bankId'       		: a['bank'],
             'label'      		: a['label'],
             'number'     		: a['number'],
@@ -398,7 +419,7 @@ def getAccounts(args):
   # create json
   j = json.dumps(r)
   # return result
-  return j 
+  return j
 
 # return the latest single FXRate data specified by the fields: fromCurrencyCode and toCurrencyCode.
 # If it is not found by (fromCurrencyCode, toCurrencyCode) order, it will try (toCurrencyCode, fromCurrencyCode) order.
@@ -472,12 +493,9 @@ def getCounterpartyByCounterpartyId(args):
       # assemble the return string
       s = { 'name'                          : c['name'],
             'created_by_user_id'            : c['created_by_user_id'],
-            'this_bank_id'                   : c['this_bank_id'], 
+            'this_bank_id'                  : c['this_bank_id'],
             'this_account_id'               : c['this_account_id'],
-            'this_view_id'                   : c['this_view_id'],
-            'other_bank_id'                  : c['other_bank_id'],
-            'other_account_id'              : c['other_account_id'],
-            'other_account_provider'        : c['other_account_provider'],
+            'this_view_id'                  : c['this_view_id'],
             'counterparty_id'               : c['counterparty_id'],
             'other_bank_routing_scheme'     : c['other_bank_routing_scheme'],
             'other_account_routing_scheme'  : c['other_account_routing_scheme'],
@@ -517,9 +535,6 @@ def getCounterpartyByIban(args):
             'this_bank_id'                  : c['this_bank_id'], 
             'this_account_id'               : c['this_account_id'],
             'this_view_id'                  : c['this_view_id'],
-            'other_bank_id'                 : c['other_bank_id'],
-            'other_account_id'              : c['other_account_id'],
-            'other_account_provider'        : c['other_account_provider'],
             'counterparty_id'               : c['counterparty_id'],
             'other_bank_routing_scheme'     : c['other_bank_routing_scheme'],
             'other_account_routing_scheme'  : c['other_account_routing_scheme'],

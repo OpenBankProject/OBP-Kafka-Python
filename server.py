@@ -42,7 +42,9 @@ def get_default_gateway_linux():
 
 def getFuncName(data):
   jdata = json.loads(data)
-  if 'target' in jdata:
+  if 'action' in jdata:
+    return json.loads(data)["action"].split(".")[1]
+  elif 'target' in jdata:
     return json.loads(data)["name"]+(json.loads(data)["target"].title())
   else:
     return json.loads(data)["name"]
