@@ -9,6 +9,10 @@ import struct
 import logging
 import json
 
+# load mockup data from json file
+with open('example_import.json') as data_file:
+  data = json.load(data_file)
+
 try:
   from kafka import KeyedProducer, KafkaConsumer, KafkaClient
 except ImportError:
@@ -39,25 +43,11 @@ def get_default_gateway_linux():
       # covert read field to ipv4 format
       return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
 
-
-def getFuncName(data):
+def getVersion(data):
   jdata = json.loads(data)
-  if 'action' in jdata:
-    return json.loads(data)["action"].split(".")[1]
-  elif 'target' in jdata:
-    return json.loads(data)["name"]+(json.loads(data)["target"].title())
-  else:
-    return json.loads(data)["name"]
+  if 'version' in jdata:
+    return json.loads(data)["version"]
 
-def getArguments(data):
-  r = dict()
-  args = json.loads(data)
-  for item in args.items():
-    k = item[0]
-    v = item[1]
-    if (k != "name" and k != "target"):
-      r.update({k:v})
-  return r
 # Split message and extract function name and arguments
 # then pass them to obp.py for further processing 
 #
@@ -70,7 +60,7 @@ def processMessage(message):
   print(version)
   # check if function name exists in obp.py
   module_name='obp_v'+version
-  obp = importlib.import_module(module_name)
+  obp = __import__(module_name)
   reqFunc = obp.getFuncName(decoded)
   print(reqFunc)
   # return error if empty
@@ -86,6 +76,7 @@ def processMessage(message):
     # create dictionary if not empty
     if reqArgs != None:
       # execute function from obp.py and return result
+      obp.data = data
       return getattr(obp, reqFunc)(reqArgs)
     return '{"error":"arguments missing"}'
   else:
