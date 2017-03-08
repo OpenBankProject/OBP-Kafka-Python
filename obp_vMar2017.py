@@ -10,7 +10,7 @@ data = dict()
 def getFuncName(data):
   jdata = json.loads(data)
   if 'action' in jdata:
-    return json.loads(data)['action'].split('.')[1].replace('.', '')
+    return json.loads(data)['action'].split('.')[1].replace('.', '')+json.loads(data)['action'].split('.')[2]
 
 
 def getArguments(data):
@@ -197,7 +197,20 @@ def validateChallengeAnswer(args):
   challengeId  = args['challengeId']
   hashOfSuppliedAnswer = args['hashOfSuppliedAnswer']
 
-  s = { 'answer' : 'true' }
+  try:
+    changToInt = int(hashOfSuppliedAnswer)
+  except:
+      return json.dumps( {'error' : 'Need a numeric TAN'} )
+  if changToInt <= 0:
+      return json.dumps( {'error' : 'Need a positive TAN'} )
+  else:
+      answer = "true"
+      
+  s = { 'answer' : answer }
+# nonEmpty <- booleanToBox(hashOfSuppliedAnswer.nonEmpty) ?~ "Need a non-empty answer"
+# answerToNumber <- tryo(BigInt(hashOfSuppliedAnswer)) ?~! "Need a numeric TAN"
+# positive <- booleanToBox(answerToNumber > 0) ?~ "Need a positive TAN"
+
 
   r  =  { 'count': '',
           'pager': '',
