@@ -10,7 +10,7 @@ data = dict()
 def getFuncName(data):
   jdata = json.loads(data)
   if 'action' in jdata:
-    return json.loads(data)["action"].split(".")[1]
+    return json.loads(data)['action'].split('.')[1].replace('.', '')
 
 
 def getArguments(data):
