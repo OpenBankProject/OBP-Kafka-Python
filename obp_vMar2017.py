@@ -207,10 +207,6 @@ def validateChallengeAnswer(args):
       answer = "true"
       
   s = { 'answer' : answer }
-# nonEmpty <- booleanToBox(hashOfSuppliedAnswer.nonEmpty) ?~ "Need a non-empty answer"
-# answerToNumber <- tryo(BigInt(hashOfSuppliedAnswer)) ?~! "Need a numeric TAN"
-# positive <- booleanToBox(answerToNumber > 0) ?~ "Need a positive TAN"
-
 
   r  =  { 'count': '',
           'pager': '',
@@ -624,4 +620,36 @@ def getTransactionRequestTypeCharge(args):
       # return result
       return j 
   # return empty if not found 
-  return json.dumps({'':''})     
+  return json.dumps({'':''})
+
+# getTransactionRequestStatusesImpl 
+# accepts arguments: None
+# returns string: 
+def getTransactionRequestStatusesImpl(args):
+    transactionRequestId = "1234567"
+
+    s = {
+        "transactionRequestId": transactionRequestId,
+        "bulkTransactionsStatus": [
+            {
+                "transactionId": "1",
+                "transactionStatus": "2",
+                "transactionTimestamp": "3"
+            },
+            {
+                "transactionId": "1",
+                "transactionStatus": "2",
+                "transactionTimestamp": "3"
+            }
+        ]
+    }
+
+    r = {'count': 1,
+         'pager': '',
+         'state': '',
+         'data': [s]}
+
+    # create json
+    j = json.dumps(r)
+    # return result
+    return j

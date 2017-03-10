@@ -1,5 +1,6 @@
 import json
 import uuid
+import obp_vMar2017
 
 data = dict()
 
@@ -612,4 +613,8 @@ def getTransactionRequestTypeCharge(args):
       # return result
       return j 
   # return empty if not found 
-  return json.dumps({'':''})     
+  return json.dumps({'':''})
+
+# see details in bp_vMar2017.getTransactionRequestStatusesImpl
+def getTransactionRequestStatusesImpl(args):
+    obp_vMar2017.getTransactionRequestStatusesImpl
