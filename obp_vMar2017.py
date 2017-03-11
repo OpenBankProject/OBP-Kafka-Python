@@ -331,7 +331,8 @@ def putTransaction(args):
       "to_counterparty_other_bank_routing_address": args['toCounterpartyOtherBankRoutingAddress'],
       "to_counterparty_other_account_routing_address": args['toCounterpartyOtherRoutingAddress'],
       "to_counterparty_other_account_routing_scheme": args['toCounterpartyOtherRoutingScheme'],
-      "to_counterparty_other_bank_routing_scheme": args['toCounterpartyOtherBankRoutingScheme']
+      "to_counterparty_other_bank_routing_scheme": args['toCounterpartyOtherBankRoutingScheme'],
+      'type': 'AC'
   }
 
   # append new element to the transactions attribute
