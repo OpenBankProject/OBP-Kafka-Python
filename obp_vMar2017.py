@@ -315,7 +315,7 @@ def putTransaction(args):
 
   tranactionNew = {
       "id": transactionIdNew,
-      "description": args['description'],
+      "description": args['transactionDescription'],
       "transaction_request_type": args['transactionRequestType'],
       "to_currency": args['transactionCurrency'],
       "to_amount": args['transactionAmount'],
@@ -324,14 +324,14 @@ def putTransaction(args):
       "from_bank_id": args['fromAccountBankId'],
       "from_account_id": args['fromAccountId'],
 
-      "to_bank_id": args['toCounterpartyOtherBankRoutingAddress'],
-      "to_account_id": args['toCounterpartyOtherRoutingAddress'],
+      "to_bank_id": args['toCounterpartyBankRoutingAddress'],
+      "to_account_id": args['toCounterpartyRoutingAddress'],
 
       "to_counterparty_id": args['toCounterpartyId'],
-      "to_counterparty_other_bank_routing_address": args['toCounterpartyOtherBankRoutingAddress'],
-      "to_counterparty_other_account_routing_address": args['toCounterpartyOtherRoutingAddress'],
-      "to_counterparty_other_account_routing_scheme": args['toCounterpartyOtherRoutingScheme'],
-      "to_counterparty_other_bank_routing_scheme": args['toCounterpartyOtherBankRoutingScheme'],
+      "to_counterparty_bank_routing_address": args['toCounterpartyBankRoutingAddress'],
+      "to_counterparty_routing_address": args['toCounterpartyRoutingAddress'],
+      "to_counterparty_routing_scheme": args['toCounterpartyRoutingScheme'],
+      "to_counterparty_bank_routing_scheme": args['toCounterpartyBankRoutingScheme'],
       'type': 'AC'
   }
 
