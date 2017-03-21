@@ -13,6 +13,10 @@ import json
 with open('example_import.json') as data_file:
   data = json.load(data_file)
 
+# load mockup data from json file
+with open('example_import_mar2017.json') as data_file:
+  data_mar2017 = json.load(data_file)
+  
 try:
   from kafka import KeyedProducer, KafkaConsumer, KafkaClient
 except ImportError:
@@ -75,8 +79,12 @@ def processMessage(message):
     print(reqArgs)
     # create dictionary if not empty
     if reqArgs != None:
+      # set the data according to version
+      if version =="Nov2016" :
+        obp.data = data
+      else:
+        obp.data = data_mar2017
       # execute function from obp.py and return result
-      obp.data = data
       return getattr(obp, reqFunc)(reqArgs)
     return '{"error":"arguments missing"}'
   else:
