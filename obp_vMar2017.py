@@ -242,6 +242,7 @@ def getTransaction(args):
     accountId = args['accountId']
     transactionId = args['transactionId']
     for t in transactions:
+        # these transactions are imported when create sandbox, the older ones.
         if 'thisAccount' in t:
             if bankId == t['thisAccount']['bank'] and accountId == t['thisAccount']['id'] and transactionId == t['id']:
                 # assemble the return string
@@ -270,6 +271,34 @@ def getTransaction(args):
                 j = json.dumps(r)
                 # return result
                 return j
+        # this is for new transactions, when create transaction, there will be create new records.         
+        elif 'fromAccountBankId' in t:
+            if bankId == t['fromAccountBankId']and accountId == t['fromAccountId'] and transactionId == t['transactionId']:
+                s = {'transactionId': t['transactionId'],
+                     'accountId': t['fromAccountId'],
+                     'amount': t['transactionAmount'],
+                     'bankId': t['fromAccountBankId'],
+                     'completedDate': t['transactionPostedDate'],
+                     'counterpartyId': t['toCounterpartyId'],
+                     'counterpartyName':t['toCounterpartyName'],
+                     'currency': t['transactionCurrency'],
+                     'description': t['transactionDescription'],
+                     'newBalanceAmount': '0.0',
+                     'newBalanceCurrency': 'EUR',
+                     'postedDate': t['transactionPostedDate'],
+                     'type': t['type'],
+                     'userId': t['userId']
+                     }
+                # create array for single result
+                r = {'count': '',
+                     'pager': '',
+                     'state': '',
+                     'target': 'transaction',
+                     'data': [s]}
+                # create json
+                j = json.dumps(r)
+                # return result
+                return j        
     # return empty if not found 
     return json.dumps({'': ''})
 
@@ -287,6 +316,7 @@ def getTransactions(args):
     # queryParams = args['queryParams']
     l = []
     for t in transactions:
+        # these transactions are imported when create sandbox, the older ones.
         if 'thisAccount' in t:
             if bankId == t['thisAccount']['bank'] and accountId == t['thisAccount']['id']:
                 # assemble the return string
@@ -304,6 +334,26 @@ def getTransactions(args):
                      'postedDate': t['details']['posted'],
                      'type': t['details']['type'],
                      'userId': ''
+                     }
+                l.append(s)
+        # this is for new transactions, when create transaction, there will be create new records.       
+        elif 'fromAccountBankId' in t:
+             if bankId == t['fromAccountBankId']and accountId == t['fromAccountId']:
+                # assemble the return string
+                s = {'transactionId': t['transactionId'],
+                     'accountId': t['fromAccountId'],
+                     'amount': t['transactionAmount'],
+                     'bankId': t['fromAccountBankId'],
+                     'completedDate': t['transactionPostedDate'],
+                     'counterpartyId': t['toCounterpartyId'],
+                     'counterpartyName':t['toCounterpartyName'],
+                     'currency': t['transactionCurrency'],
+                     'description': t['transactionDescription'],
+                     'newBalanceAmount': '0.0',
+                     'newBalanceCurrency': 'EUR',
+                     'postedDate': t['transactionPostedDate'],
+                     'type': t['type'],
+                     'userId': t['userId']
                      }
                 l.append(s)
     r = {'count': '',
