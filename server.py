@@ -49,8 +49,12 @@ def get_default_gateway_linux():
 
 def getVersion(data):
   jdata = json.loads(data)
+  # this is for Nov2016 - KafkaMappedConnector.scala
   if 'version' in jdata:
     return json.loads(data)["version"]
+  # this is for Mar2017 later - KafkaMappedConnector_vMar2017 
+  elif 'messageFormat' in jdata:
+    return json.loads(data)["messageFormat"]
 
 # Split message and extract function name and arguments
 # then pass them to obp.py for further processing 
