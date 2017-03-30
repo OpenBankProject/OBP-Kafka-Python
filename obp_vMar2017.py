@@ -44,7 +44,8 @@ def getUser(args):
     for u in users:
         if username == u['email'] and password == u['password']:
             # format result 
-            s = {'email': u['email'],
+            s = {'errorCode': 'OBPS-001: ....',
+                 'email': u['email'],
                  'displayName': u['displayName']}
             # create array for single result
             r = {'count': '',
@@ -75,7 +76,8 @@ def getBank(args):
     for b in banks:
         if bankId == b['id']:
             # assemble the return string
-            s = {'bankId': b['id'],
+            s = {'errorCode': 'OBPS-001: ....',
+                'bankId': b['id'],
                  'name': b['fullName'],
                  'logo': b['logo'],
                  'url': b['website']}
@@ -103,7 +105,8 @@ def getBanks(args):
     l = []
     for b in banks:
         # assemble the return string
-        s = {'bankId': b['id'],
+        s = {'errorCode': 'OBPS-001: ....',
+             'bankId': b['id'],
              'name': b['fullName'],
              'logo': b['logo'],
              'url': b['website']}
@@ -132,7 +135,8 @@ def getChallengeThreshold(args):
     userId = args['userId']
     username = args['username']
 
-    s = {'limit': '1000',
+    s = {'errorCode': 'OBPS-001: ....',
+         'limit': '1000',
          'currency': 'EUR'}
 
     r = {'count': '',
@@ -158,7 +162,8 @@ def getChargeLevel(args):
     userId = args['userId']
     username = args['username']
 
-    s = {'amount': '0.001',
+    s = {'errorCode': 'OBPS-001: ....',
+         'amount': '0.001',
          'currency': 'EUR'}
 
     r = {'count': '',
@@ -185,7 +190,8 @@ def createChallenge(args):
     bankId = args['bankId']
     accountId = args['accountId']
 
-    s = {'challengeId': str(uuid.uuid4())}
+    s = {'errorCode': 'OBPS-001: ....',
+         'challengeId': str(uuid.uuid4())}
 
     r = {'count': '',
          'pager': '',
@@ -216,7 +222,8 @@ def validateChallengeAnswer(args):
     else:
         answer = "true"
 
-    s = {'answer': answer}
+    s = {'errorCode': 'OBPS-001: ....',
+         'answer': answer}
 
     r = {'count': '',
          'pager': '',
@@ -246,7 +253,8 @@ def getTransaction(args):
         if 'thisAccount' in t:
             if bankId == t['thisAccount']['bank'] and accountId == t['thisAccount']['id'] and transactionId == t['id']:
                 # assemble the return string
-                s = {'transactionId': t['id'],
+                s = {'errorCode': 'OBPS-001: ....',
+                     'transactionId': t['id'],
                      'accountId': t['thisAccount']['id'],
                      'amount': t['details']['value'],
                      'bankId': t['thisAccount']['bank'],
@@ -274,7 +282,8 @@ def getTransaction(args):
         # this is for new transactions, when create transaction, there will be create new records.         
         elif 'fromAccountBankId' in t:
             if bankId == t['fromAccountBankId']and accountId == t['fromAccountId'] and transactionId == t['transactionId']:
-                s = {'transactionId': t['transactionId'],
+                s = {'errorCode': 'OBPS-001: ....',
+                     'transactionId': t['transactionId'],
                      'accountId': t['fromAccountId'],
                      'amount': t['transactionAmount'],
                      'bankId': t['fromAccountBankId'],
@@ -320,7 +329,8 @@ def getTransactions(args):
         if 'thisAccount' in t:
             if bankId == t['thisAccount']['bank'] and accountId == t['thisAccount']['id']:
                 # assemble the return string
-                s = {'transactionId': t['id'],
+                s = {'errorCode': 'OBPS-001: ....',
+                     'transactionId': t['id'],
                      'accountId': t['thisAccount']['id'],
                      'amount': t['details']['value'],
                      'bankId': t['thisAccount']['bank'],
@@ -340,7 +350,8 @@ def getTransactions(args):
         elif 'fromAccountBankId' in t:
              if bankId == t['fromAccountBankId']and accountId == t['fromAccountId']:
                 # assemble the return string
-                s = {'transactionId': t['transactionId'],
+                s = {'errorCode': 'OBPS-001: ....',
+                     'transactionId': t['transactionId'],
                      'accountId': t['fromAccountId'],
                      'amount': t['transactionAmount'],
                      'bankId': t['fromAccountBankId'],
@@ -413,7 +424,8 @@ def putTransaction(args):
         json.dump(data, f)
 
     # assemble the return string
-    s = {'transactionId': args['transactionId']}
+    s = {'errorCode': 'OBPS-001: ....',
+         'transactionId': args['transactionId']}
     # create array for single result
     r = {'count': '',
          'pager': '',
@@ -452,7 +464,8 @@ def getAccount(args):
                 (not bankId and accountId == a['id']) or \
                 (not bankId and number == a['number']):
             # assemble the return string
-            s = {'accountId': a['id'],
+            s = {'errorCode': 'OBPS-001: ....',
+                 'accountId': a['id'],
                  'bankId': a['bank'],
                  'label': a['label'],
                  'number': a['number'],
@@ -501,7 +514,8 @@ def getAccounts(args):
     for a in accounts:
         if ((userId in a['owners'] or username in a['owners']) and bankId == a['bank']):
             # assemble the return string
-            s = {'accountId': a['id'],
+            s = {'errorCode': 'OBPS-001: ....',
+                 'accountId': a['id'],
                  'bankId': a['bank'],
                  'label': a['label'],
                  'number': a['number'],
@@ -548,7 +562,8 @@ def getCurrentFxRate(args):
         # find FXRate by (fromCurrencyCode, toCurrencyCode), the normal order  
         if fromCurrencyCode == f['fromCurrencyCode'] and toCurrencyCode == f['toCurrencyCode']:
             # assemble the return string
-            s = {'fromCurrencyCode': f['fromCurrencyCode'],
+            s = {'errorCode': 'OBPS-001: ....',
+                 'fromCurrencyCode': f['fromCurrencyCode'],
                  'toCurrencyCode': f['toCurrencyCode'],
                  'conversionValue': f['conversionValue'],
                  'inverseConversionValue': f['inverseConversionValue'],
@@ -566,7 +581,8 @@ def getCurrentFxRate(args):
             # find FXRate by (toCurrencyCode, fromCurrencyCode), the reverse order
         elif toCurrencyCode == f['fromCurrencyCode'] and fromCurrencyCode == f['toCurrencyCode']:
             # assemble the return string
-            s = {'fromCurrencyCode': f['toCurrencyCode'],
+            s = {'errorCode': 'OBPS-001: ....',
+                 'fromCurrencyCode': f['toCurrencyCode'],
                  'toCurrencyCode': f['fromCurrencyCode'],
                  'conversionValue': f['conversionValue'],
                  'inverseConversionValue': f['inverseConversionValue'],
@@ -599,7 +615,8 @@ def getCounterpartyByCounterpartyId(args):
     for c in counterparties:
         if counterpartyId == c['counterpartyId']:
             # assemble the return string
-            s = {'name': c['name'],
+            s = {'errorCode': 'OBPS-001: ....',
+                 'name': c['name'],
                  'createdByUserId': c['createdByUserId'],
                  'thisBankId': c['thisBankId'],
                  'thisAccountId': c['thisAccountId'],
@@ -643,7 +660,8 @@ def getCounterpartyByIban(args):
         if otherAccountRoutingAddress == c['otherAccountRoutingAddress'] and \
                         otherAccountRoutingScheme == c['otherAccountRoutingScheme']:
             # assemble the return string
-            s = {'name': c['name'],
+            s = {'errorCode': 'OBPS-001: ....',
+                 'name': c['name'],
                  'createdByUserId': c['createdByUserId'],
                  'thisBankId': c['thisBankId'],
                  'thisAccountId': c['thisAccountId'],
@@ -689,7 +707,7 @@ def getTransactionRequestTypeCharge(args):
     for t in transactionRequestTypes:
         if transactionRequestType == t['transactionRequestType']:
             # assemble the return string
-            s = {
+            s = {'errorCode': 'OBPS-001: ....',
                 'transactionRequestType': t['transactionRequestType'],
                 'bankId': t['bankId'],
                 'chargeCurrency': t['chargeCurrency'],
@@ -714,7 +732,7 @@ def getTransactionRequestTypeCharge(args):
 def getTransactionRequestStatusesImpl(args):
     transactionRequestId = "1234567"
 
-    s = {
+    s = {'errorCode': 'OBPS-001: ....',
         "transactionRequestId": transactionRequestId,
         "bulkTransactionsStatus": [
             {
