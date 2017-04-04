@@ -476,7 +476,10 @@ def getAccount(args):
                  'owners': a['owners'],
                  'generatePublicView': a['generatePublicView'],
                  'generateAccountantsView': a['generateAccountantsView'],
-                 'generateAuditorsView': a['generateAuditorsView']
+                 'generateAuditorsView': a['generateAuditorsView'],
+                 'accountRoutingScheme': a['accountRoutingScheme'],
+                 'accountRoutingAddress': a['accountRoutingAddress'],
+                 'branchId': a['branchId']
                  }
             # create array for single result 
             r = {'count': '',
@@ -526,7 +529,10 @@ def getAccounts(args):
                  'owners': a['owners'],
                  'generatePublicView': a['generatePublicView'],
                  'generateAccountantsView': a['generateAccountantsView'],
-                 'generateAuditorsView': a['generateAuditorsView']
+                 'generateAuditorsView': a['generateAuditorsView'],
+                 'accountRoutingScheme': a['accountRoutingScheme'],
+                 'accountRoutingAddress': a['accountRoutingAddress'],
+                 'branchId': a['branchId']
                  }
             l.append(s)
     r = {'count': '',

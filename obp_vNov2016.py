@@ -13,7 +13,7 @@ def getFuncName(data):
   if 'target' in jdata:
     return json.loads(data)["name"]+(json.loads(data)["target"].title())
   else:
-    return json.loads(data)["name"]
+    return json.loads(data)["north"]
 
 def getArguments(data):
   r = dict()
@@ -370,18 +370,21 @@ def getAccount(args):
        (not bankId and accountId == a['id']) or \
        (not bankId and number    == a['number']): 
       # assemble the return string
-      s = { 'accountId'			: a['id'], 
-            'bankId'       		: a['bank'],
-            'label'      		: a['label'],
-            'number'     		: a['number'],
-            'type'       		: a['type'],
-            'balanceAmount'    		: a['balance']['amount'],
-            'balanceCurrency'           : a['balance']['currency'],
-            'iban'       		: a['IBAN'],
-            'owners'     		: a['owners'],
-            'generate_public_view'      : a['generate_public_view'],
-	    'generate_accountants_view' : a['generate_accountants_view'],
-            'generate_auditors_view'    : a['generate_auditors_view']
+      s = {'accountId': a['id'],
+           'bankId': a['bank'],
+           'label': a['label'],
+           'number': a['number'],
+           'type': a['type'],
+           'balanceAmount': a['balance']['amount'],
+           'balanceCurrency': a['balance']['currency'],
+           'iban': a['IBAN'],
+           'owners': a['owners'],
+           'generate_public_view': a['generate_public_view'],
+           'generate_accountants_view': a['generate_accountants_view'],
+           'generate_auditors_view': a['generate_auditors_view'],
+           'accountRoutingScheme': a['accountRoutingScheme'],
+           'accountRoutingAddress': a['accountRoutingAddress'],
+           'branchId': a['branchId']
       }
       # create array for single result 
       r  =  { 'count': '',
@@ -418,18 +421,21 @@ def getAccounts(args):
   for a in accounts:
     if ( (userId in a['owners'] or username in a['owners'] ) and bankId == a['bank']):
       # assemble the return string
-      s = { 'accountId'     			: a['id'],
-            'bankId'       		: a['bank'],
-            'label'      		: a['label'],
-            'number'     		: a['number'],
-            'type'       		: a['type'],
-            'balanceAmount'             : a['balance']['amount'],
-            'balanceCurrency'           : a['balance']['currency'],
-            'iban'       		: a['IBAN'],
-            'owners'     		: a['owners'],
-            'generate_public_view'      : a['generate_public_view'],
-	    'generate_accountants_view' : a['generate_accountants_view'],
-            'generate_auditors_view'    : a['generate_auditors_view']
+      s = {'accountId': a['id'],
+           'bankId': a['bank'],
+           'label': a['label'],
+           'number': a['number'],
+           'type': a['type'],
+           'balanceAmount': a['balance']['amount'],
+           'balanceCurrency': a['balance']['currency'],
+           'iban': a['IBAN'],
+           'owners': a['owners'],
+           'generate_public_view': a['generate_public_view'],
+           'generate_accountants_view': a['generate_accountants_view'],
+           'generate_auditors_view': a['generate_auditors_view'],
+           'accountRoutingScheme': a['accountRoutingScheme'],
+           'accountRoutingAddress': a['accountRoutingAddress'],
+           'branchId': a['branchId']
       }
       l.append(s)
   r  =  { 'count': '',
