@@ -13589,7 +13589,10 @@
       },
       "type": "CURRENT PLUS",
       "id": "f65e28a5-9abe-428f-85bb-6c3c38122adb",
-      "bank": "obp-bank-x-gh"
+      "bank": "obp-bank-x-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13607,7 +13610,10 @@
       },
       "type": "CURRENT PLUS",
       "id": "e0ec24be-5ab1-4760-9189-ad280228c134",
-      "bank": "obp-bank-x-gh"
+      "bank": "obp-bank-x-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13625,7 +13631,10 @@
       },
       "type": "CURRENT PLUS",
       "id": "2330135d-fca8-4268-838d-833074985209",
-      "bank": "obp-bank-x-gh"
+      "bank": "obp-bank-x-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13643,7 +13652,10 @@
       },
       "type": "CURRENT PLUS",
       "id": "e4f001fe-0f0d-4f93-a8b2-d865077315ec",
-      "bank": "obp-bank-x-gh"
+      "bank": "obp-bank-x-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13661,7 +13673,10 @@
       },
       "type": "BUSINESS CURRENT",
       "id": "b8ae95c5-0b62-4d74-8a31-1a9388b128aa",
-      "bank": "obp-bank-x-gh"
+      "bank": "obp-bank-x-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13679,7 +13694,10 @@
       },
       "type": "BUSINESS CURRENT",
       "id": "213527de-c423-452a-b2f8-8475e4cc2cfe",
-      "bank": "obp-bank-x-gh"
+      "bank": "obp-bank-x-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13697,7 +13715,10 @@
       },
       "type": "Red Mastercard",
       "id": "4e1c02a1-2f9f-4587-9433-80b949c5a346",
-      "bank": "obp-bank-x-gh"
+      "bank": "obp-bank-x-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13715,7 +13736,10 @@
       },
       "type": "CURRENT PLUS",
       "id": "f65e28a5-9abe-428f-85bb-6c3c38122adb",
-      "bank": "obp-bank-y-gh"
+      "bank": "obp-bank-y-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13733,7 +13757,10 @@
       },
       "type": "CURRENT PLUS",
       "id": "e0ec24be-5ab1-4760-9189-ad280228c134",
-      "bank": "obp-bank-y-gh"
+      "bank": "obp-bank-y-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13751,7 +13778,10 @@
       },
       "type": "CURRENT PLUS",
       "id": "2330135d-fca8-4268-838d-833074985209",
-      "bank": "obp-bank-y-gh"
+      "bank": "obp-bank-y-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13769,7 +13799,10 @@
       },
       "type": "CURRENT PLUS",
       "id": "e4f001fe-0f0d-4f93-a8b2-d865077315ec",
-      "bank": "obp-bank-y-gh"
+      "bank": "obp-bank-y-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13787,7 +13820,10 @@
       },
       "type": "BUSINESS CURRENT",
       "id": "b8ae95c5-0b62-4d74-8a31-1a9388b128aa",
-      "bank": "obp-bank-y-gh"
+      "bank": "obp-bank-y-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13805,7 +13841,10 @@
       },
       "type": "BUSINESS CURRENT",
       "id": "213527de-c423-452a-b2f8-8475e4cc2cfe",
-      "bank": "obp-bank-y-gh"
+      "bank": "obp-bank-y-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     },
     {
       "owners": [
@@ -13823,7 +13862,10 @@
       },
       "type": "Red Mastercard",
       "id": "4e1c02a1-2f9f-4587-9433-80b949c5a346",
-      "bank": "obp-bank-y-gh"
+      "bank": "obp-bank-y-gh",
+      "branchId": "123",
+      "accountRoutingAddress": "123456",
+      "accountRoutingScheme": "OBP"
     }
   ],
   "crmEvents": [
