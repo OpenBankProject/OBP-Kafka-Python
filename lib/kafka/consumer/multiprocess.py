@@ -3,17 +3,18 @@ from __future__ import absolute_import
 from collections import namedtuple
 import logging
 from multiprocessing import Process, Manager as MPManager
-try:
-    from Queue import Empty, Full # python 3
-except ImportError:
-    from queue import Empty, Full # python 2
 import time
+import warnings
 
+from kafka.vendor.six.moves import queue # pylint: disable=import-error
+
+from ..common import KafkaError
 from .base import (
     Consumer,
     AUTO_COMMIT_MSG_COUNT, AUTO_COMMIT_INTERVAL,
     NO_MESSAGES_WAIT_TIME_SECONDS,
-    FULL_QUEUE_WAIT_TIME_SECONDS
+    FULL_QUEUE_WAIT_TIME_SECONDS,
+    MAX_BACKOFF_SECONDS,
 )
 from .simple import SimpleConsumer
 
@@ -23,7 +24,7 @@ log = logging.getLogger(__name__)
 Events = namedtuple("Events", ["start", "pause", "exit"])
 
 
-def _mp_consume(client, group, topic, queue, size, events, **consumer_options):
+def _mp_consume(client, group, topic, message_queue, size, events, **consumer_options):
     """
     A child process worker which consumes messages based on the
     notifications given by the controller process
@@ -33,57 +34,67 @@ def _mp_consume(client, group, topic, queue, size, events, **consumer_options):
     functionality breaks unless this function is kept outside of a class
     """
 
-    # Make the child processes open separate socket connections
-    client.reinit()
+    # Initial interval for retries in seconds.
+    interval = 1
+    while not events.exit.is_set():
+        try:
+            # Make the child processes open separate socket connections
+            client.reinit()
 
-    # We will start consumers without auto-commit. Auto-commit will be
-    # done by the master controller process.
-    consumer = SimpleConsumer(client, group, topic,
-                              auto_commit=False,
-                              auto_commit_every_n=None,
-                              auto_commit_every_t=None,
-                              **consumer_options)
+            # We will start consumers without auto-commit. Auto-commit will be
+            # done by the master controller process.
+            consumer = SimpleConsumer(client, group, topic,
+                                      auto_commit=False,
+                                      auto_commit_every_n=None,
+                                      auto_commit_every_t=None,
+                                      **consumer_options)
 
-    # Ensure that the consumer provides the partition information
-    consumer.provide_partition_info()
+            # Ensure that the consumer provides the partition information
+            consumer.provide_partition_info()
 
-    while True:
-        # Wait till the controller indicates us to start consumption
-        events.start.wait()
-
-        # If we are asked to quit, do so
-        if events.exit.is_set():
-            break
-
-        # Consume messages and add them to the queue. If the controller
-        # indicates a specific number of messages, follow that advice
-        count = 0
-
-        message = consumer.get_message()
-        if message:
             while True:
-                try:
-                    queue.put(message, timeout=FULL_QUEUE_WAIT_TIME_SECONDS)
+                # Wait till the controller indicates us to start consumption
+                events.start.wait()
+
+                # If we are asked to quit, do so
+                if events.exit.is_set():
                     break
-                except Full:
-                    if events.exit.is_set(): break
 
-            count += 1
+                # Consume messages and add them to the queue. If the controller
+                # indicates a specific number of messages, follow that advice
+                count = 0
 
-            # We have reached the required size. The controller might have
-            # more than what he needs. Wait for a while.
-            # Without this logic, it is possible that we run into a big
-            # loop consuming all available messages before the controller
-            # can reset the 'start' event
-            if count == size.value:
-                events.pause.wait()
+                message = consumer.get_message()
+                if message:
+                    while True:
+                        try:
+                            message_queue.put(message, timeout=FULL_QUEUE_WAIT_TIME_SECONDS)
+                            break
+                        except queue.Full:
+                            if events.exit.is_set(): break
 
-        else:
-            # In case we did not receive any message, give up the CPU for
-            # a while before we try again
-            time.sleep(NO_MESSAGES_WAIT_TIME_SECONDS)
+                    count += 1
 
-    consumer.stop()
+                    # We have reached the required size. The controller might have
+                    # more than what he needs. Wait for a while.
+                    # Without this logic, it is possible that we run into a big
+                    # loop consuming all available messages before the controller
+                    # can reset the 'start' event
+                    if count == size.value:
+                        events.pause.wait()
+
+                else:
+                    # In case we did not receive any message, give up the CPU for
+                    # a while before we try again
+                    time.sleep(NO_MESSAGES_WAIT_TIME_SECONDS)
+
+            consumer.stop()
+
+        except KafkaError as e:
+            # Retry with exponential backoff
+            log.error("Problem communicating with Kafka (%s), retrying in %d seconds..." % (e, interval))
+            time.sleep(interval)
+            interval = interval*2 if interval*2 < MAX_BACKOFF_SECONDS else MAX_BACKOFF_SECONDS
 
 
 class MultiProcessConsumer(Consumer):
@@ -92,7 +103,7 @@ class MultiProcessConsumer(Consumer):
     parallel using multiple processes
 
     Arguments:
-        client: a connected KafkaClient
+        client: a connected SimpleClient
         group: a name for this consumer, used for offset storage and must be unique
             If you are connecting to a server that does not support offset
             commit/fetch (any prior to 0.8.1.1), then you *must* set this to None
@@ -124,6 +135,10 @@ class MultiProcessConsumer(Consumer):
                  num_procs=1,
                  partitions_per_proc=0,
                  **simple_consumer_options):
+
+        warnings.warn('This class has been deprecated and will be removed in a'
+                      ' future release. Use KafkaConsumer instead',
+                      DeprecationWarning)
 
         # Initiate the base consumer class
         super(MultiProcessConsumer, self).__init__(
@@ -208,7 +223,7 @@ class MultiProcessConsumer(Consumer):
                 # TODO: This is a hack and will make the consumer block for
                 # at least one second. Need to find a better way of doing this
                 partition, message = self.queue.get(block=True, timeout=1)
-            except Empty:
+            except queue.Empty:
                 break
 
             # Count, check and commit messages if necessary
@@ -226,10 +241,12 @@ class MultiProcessConsumer(Consumer):
 
         Keyword Arguments:
             count: Indicates the maximum number of messages to be fetched
-            block: If True, the API will block till some messages are fetched.
-            timeout: If block is True, the function will block for the specified
-                time (in seconds) until count messages is fetched. If None,
-                it will block forever.
+            block: If True, the API will block till all messages are fetched.
+                If block is a positive integer the API will block until that
+                many messages are fetched.
+            timeout: When blocking is requested the function will block for
+                the specified time (in seconds) until count messages is
+                fetched. If None, it will block forever.
         """
         messages = []
 
@@ -252,12 +269,15 @@ class MultiProcessConsumer(Consumer):
             if self.queue.empty():
                 self.events.start.set()
 
+            block_next_call = block is True or block > len(messages)
             try:
-                partition, message = self.queue.get(block, timeout)
-            except Empty:
+                partition, message = self.queue.get(block_next_call,
+                                                    timeout)
+            except queue.Empty:
                 break
 
-            messages.append(message)
+            _msg = (partition, message) if self.partition_info else message
+            messages.append(_msg)
             new_offsets[partition] = message.offset + 1
             count -= 1
             if timeout is not None:
